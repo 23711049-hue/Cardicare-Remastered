@@ -156,3 +156,29 @@ function renderClinicalCXR(container, data) {
         </div>
     `;
 }
+/* ============================================================
+   FITUR CETAK PDF (HTML2PDF)
+   ============================================================ */
+function downloadPDF(areaId) {
+    // 1. Pilih area yang mau dicetak berdasarkan ID (EKG atau CXR)
+    const element = document.getElementById(areaId);
+    
+    // 2. Konfigurasi Kertas PDF
+    const opt = {
+        margin:       10,
+        filename:     `Laporan-CardiCare-${areaId}.pdf`, // Nama file otomatis
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 }, // Resolusi tinggi
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // 3. Tampilkan Loading (Biar keren)
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if(loadingOverlay) loadingOverlay.classList.remove('d-none');
+
+    // 4. Proses Cetak
+    html2pdf().set(opt).from(element).save().then(() => {
+        // Sembunyikan Loading kalau sudah selesai
+        if(loadingOverlay) loadingOverlay.classList.add('d-none');
+    });
+}
