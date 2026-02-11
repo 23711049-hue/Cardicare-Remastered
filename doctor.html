@@ -64,12 +64,17 @@
                         </div>
                     </div>
 
-                    <div class="glass-card result-box">
+                    <div class="glass-card result-box" id="ekg-report-area">
                         <div id="ekgResultContent" class="empty-result">
                             <i class="fa-solid fa-robot"></i>
                             <p>Menunggu Data Citra...</p>
                         </div>
                     </div>
+
+                    <button onclick="downloadPDF('ekg-report-area')" class="btn-pulse" style="background: #10B981; margin-top: 1rem; width: 100%;">
+                        <i class="fa-solid fa-file-pdf"></i> Download Laporan EKG (PDF)
+                    </button>
+                    
                 </div>
             </section>
 
@@ -94,28 +99,34 @@
                         </div>
                     </div>
 
-                    <div class="glass-card result-box">
+                    <div class="glass-card result-box" id="cxr-report-area">
                         <div id="cxrResultContent" class="empty-result">
                             <i class="fa-solid fa-robot"></i>
                             <p>Menunggu Data Citra...</p>
                         </div>
                     </div>
+
+                    <button onclick="downloadPDF('cxr-report-area')" class="btn-pulse" style="background: #10B981; margin-top: 1rem; width: 100%;">
+                        <i class="fa-solid fa-file-pdf"></i> Download Laporan Rontgen (PDF)
+                    </button>
+
                 </div>
             </section>
 
         </main>
     </div>
 
-    <script src="../js/config.js"></script>
-<script src="../js/gemini.js"></script>
-<script src="../js/doctor.js"></script>
-<div id="loading-overlay" class="loading-overlay d-none">
-    <div class="heart-container">
-        <i class="fa-solid fa-heart-pulse fa-bounce" style="color: #ef4444; font-size: 5rem;"></i>
+    <script src="js/config.js"></script>
+    <script src="js/gemini.js"></script>
+    <script src="js/doctor.js"></script>
+
+    <div id="loading-overlay" class="loading-overlay d-none">
+        <div class="heart-container">
+            <i class="fa-solid fa-heart-pulse fa-bounce" style="color: #ef4444; font-size: 5rem;"></i>
+        </div>
+        <h3 id="loading-text" style="margin-top: 1.5rem; color: #1e293b; font-weight: 800;">Menganalisis Data...</h3>
+        <p style="color: #64748b;">AI sedang melakukan diagnosa klinis</p>
     </div>
-    <h3 id="loading-text" style="margin-top: 1.5rem; color: #1e293b; font-weight: 800;">Menganalisis Data...</h3>
-    <p style="color: #64748b;">AI sedang melakukan diagnosa klinis</p>
-</div>
     
 </body>
 </html>
