@@ -1,0 +1,303 @@
+/* =========================================
+   1. VARIABLES & RESET
+   ========================================= */
+:root {
+    /* Luxury Medical Palette */
+    --primary: #2563EB;       /* Royal Blue */
+    --primary-glow: rgba(37, 99, 235, 0.3);
+    --primary-dark: #1E40AF;
+    --secondary: #64748B;     /* Slate */
+    --accent: #EF4444;        /* Red */
+    
+    /* Role Colors */
+    --patient-color: #10B981; /* Emerald */
+    --doctor-color: #3B82F6;  /* Blue */
+    --risk-color: #F59E0B;    /* Amber */
+
+    /* Backgrounds */
+    --bg-body: #F0F4F8;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.6);
+    --glass-blur: blur(24px);
+
+    /* Shadows & Radius */
+    --shadow-soft: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 25px 50px -12px rgba(37, 99, 235, 0.15);
+    --radius-card: 24px;
+    --radius-btn: 50px;
+    --radius-xl: 32px;
+    --nav-width: 280px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+
+body {
+    background-color: var(--bg-body);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 40%);
+    color: #0F172A;
+    min-height: 100vh;
+}
+
+/* =========================================
+   2. LAYOUT ENGINE (GRID SYSTEM)
+   ========================================= */
+.app-container {
+    display: grid;
+    grid-template-columns: var(--nav-width) 1fr;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* =========================================
+   3. SIDEBAR STYLES
+   ========================================= */
+.sidebar {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    border-right: 1px solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(12px);
+    height: 100%;
+}
+
+.logo-area h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.separator {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94A3B8;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+    padding-left: 1rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius-btn);
+    color: var(--secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,0.6);
+    color: var(--primary);
+    transform: translateX(5px);
+}
+
+.nav-item.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 10px 20px -5px var(--primary-glow);
+}
+
+/* =========================================
+   4. MAIN CONTENT AREA
+   ========================================= */
+.main-content {
+    padding: 2rem 3rem;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Header & Typography */
+header { margin-bottom: 2rem; }
+.user-greeting h2 { font-size: 1.8rem; font-weight: 700; color: #1E293B; }
+.user-greeting p { color: var(--secondary); }
+
+/* Common Glass Card */
+.glass-card {
+    background: var(--glass-bg);
+    border: var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    padding: 2rem;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease;
+}
+
+/* =========================================
+   5. PORTAL SPECIFIC (Landing Page)
+   ========================================= */
+.portal-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    min-height: 100vh;
+}
+
+/* Brand Header (Fixed Version) */
+.brand-header {
+    text-align: center;
+    padding: 2rem 0;
+    animation: fadeIn 1s ease-out;
+}
+.brand-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+/* Screening Hero */
+.screening-section {
+    position: relative;
+    background: linear-gradient(120deg, var(--risk-color) 0%, #F97316 100%);
+    border-radius: var(--radius-xl);
+    padding: 3.5rem;
+    color: white;
+    text-align: center;
+    box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.4);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+.screening-section:hover { transform: translateY(-5px); }
+
+.screening-content { position: relative; z-index: 2; }
+.pulse-circle {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 400px; height: 400px;
+    border: 2px solid rgba(255,255,255,0.2); border-radius: 50%;
+    animation: ripple 2s infinite;
+}
+
+.btn-pulse {
+    background: white; color: #D97706; padding: 1rem 2.5rem;
+    border-radius: 50px; font-weight: 700; border: none; font-size: 1.1rem;
+    margin-top: 1.5rem; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Dual Interface */
+.dual-interface { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.role-card {
+    background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+    padding: 3rem 2rem; border-radius: var(--radius-xl);
+    text-align: center; border: 1px solid rgba(255,255,255,0.6);
+    box-shadow: var(--shadow-soft); cursor: pointer; transition: all 0.3s;
+}
+.role-card:hover { transform: translateY(-10px); }
+.role-icon { font-size: 3.5rem; margin-bottom: 1.5rem; color: var(--secondary); }
+
+.patient-card:hover { border-color: var(--patient-color); }
+.patient-card:hover .role-icon { color: var(--patient-color); }
+.doctor-card:hover { border-color: var(--doctor-color); }
+.doctor-card:hover .role-icon { color: var(--doctor-color); }
+
+.role-badge {
+    padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+    background: #F1F5F9; color: #64748B;
+}
+
+/* =========================================
+   6. ANIMATIONS & RESPONSIVE
+   ========================================= */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ripple { 0% { width: 0; height: 0; opacity: 0.5; } 100% { width: 800px; height: 800px; opacity: 0; } }
+
+@media (max-width: 768px) {
+    .app-container { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .dual-interface { grid-template-columns: 1fr; }
+    .main-content { padding: 1.5rem; }
+}
+/* =========================================
+   7. MOBILE RESPONSIVE ENGINE (PHASE 2)
+   ========================================= */
+
+@media (max-width: 768px) {
+    /* Layout Switch: Dari Grid ke Flex Column */
+    .app-container {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Sidebar berubah jadi Top Navigation Bar */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        border-right: none;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Logo Mengecil di HP */
+    .logo-area h1 { font-size: 1.1rem; }
+    
+    /* Navigasi Horizontal di Mobile */
+    .nav-menu { 
+        flex-direction: row; 
+        gap: 0.5rem; 
+        margin-top: 0;
+    }
+
+    /* Sembunyikan Teks Menu, Sisakan Ikon saja di HP */
+    .nav-item { padding: 0.6rem 0.8rem; }
+    .nav-item span { display: none; } 
+    
+    .separator { display: none; }
+
+    /* Main Content Area Adjustments */
+    .main-content { 
+        padding: 1.5rem 1rem; 
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Paksa Workspace Lab & Nutri-Guard Menumpuk Vertikal */
+    .analysis-workspace {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.5rem;
+    }
+
+    /* Komponen Card Jadi Full Width */
+    .upload-box, .result-box, .glass-card {
+        width: 100% !important;
+        min-height: auto;
+        padding: 1.5rem;
+    }
+
+    /* Portal Landing Page (Role Cards) */
+    .dual-interface {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}

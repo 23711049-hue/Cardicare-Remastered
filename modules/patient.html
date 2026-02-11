@@ -1,0 +1,77 @@
+/* ===========================
+   SPA Routing & Transition Logic
+   =========================== */
+
+/*
+  Routing sederhana (SPA-like): 
+  - Menggunakan event listener pada action card.
+  - Saat card diklik, load modul HTML terkait ke <main> tanpa reload halaman.
+  - Animasi transisi halus menggunakan CSS dan JS.
+*/
+
+/* Helper: Fungsi untuk load modul HTML secara AJAX */
+function loadModule(moduleName) {
+  // Path modul HTML
+  const modulePath = `modules/${moduleName}.html`;
+  const main = document.querySelector('main');
+
+  // Animasi keluar (fade out)
+  main.style.opacity = 0;
+  setTimeout(() => {
+    // Fetch modul HTML
+    fetch(modulePath)
+      .then(res => res.text())
+      .then(html => {
+        main.innerHTML = html;
+        // Animasi masuk (fade in)
+        main.style.opacity = 1;
+        // Fokuskan ke main untuk aksesibilitas
+        main.focus();
+      })
+      .catch(() => {
+        main.innerHTML = `<section style="padding:2rem;"><h2>Modul tidak ditemukan.</h2></section>`;
+        main.style.opacity = 1;
+      });
+  }, 350); // Durasi animasi keluar
+}
+
+/* ===========================
+   Event Listener untuk Routing
+   =========================== */
+document.addEventListener('DOMContentLoaded', () => {
+  // Ambil semua action card
+  const cards = document.querySelectorAll('.action-card');
+  cards.forEach(card => {
+    // Klik atau Enter (keyboard) untuk aksesibilitas
+    card.addEventListener('click', () => {
+      const route = card.getAttribute('data-route');
+      loadModule(route);
+    });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const route = card.getAttribute('data-route');
+        loadModule(route);
+      }
+    });
+  });
+
+  // Set animasi awal
+  const main = document.querySelector('main');
+  main.style.transition = 'opacity 0.35s cubic-bezier(.68,-0.55,.27,1.55)';
+  main.tabIndex = -1; // Agar bisa difokuskan
+});
+
+/* ===========================
+   Penjelasan Equity Requirement
+   =========================== */
+/*
+  Kenapa CSS Grid?
+  - Grid sangat powerful untuk layout dashboard yang kompleks dan responsif.
+  - Float sudah deprecated, tidak cocok untuk mobile-first dan aksesibilitas.
+  - Grid memudahkan scaling ke berbagai device tanpa hack.
+
+  Fungsi Semantic HTML (header, main, section):
+  - Membantu SEO: Mesin pencari lebih mudah memahami struktur konten.
+  - Aksesibilitas: Screen reader dan assistive tech lebih mudah navigasi.
+  - Penting untuk aplikasi medis agar user dengan disabilitas tetap bisa mengakses fitur vital.
+*/

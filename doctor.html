@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardiCare | Clinical Lab AI</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/doctor.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo-area">
+                <h1><i class="fa-solid fa-heart-pulse"></i> CardiCare</h1>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fa-solid fa-arrow-left"></i> Portal Utama
+                </a>
+                <div class="separator">DIAGNOSTIC LAB</div>
+                <a href="#" class="nav-item active" onclick="switchTool('ekg')">
+                    <i class="fa-solid fa-wave-square"></i> EKG Interpreter
+                </a>
+                <a href="#" class="nav-item" onclick="switchTool('cxr')">
+                    <i class="fa-solid fa-x-ray"></i> CXR Analyzer
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content doctor-layout">
+            
+            <header>
+                <div class="user-greeting">
+                    <h2>AI Diagnostic Console</h2>
+                    <p>Powered by Gemini 1.5 Flash (Clinical Vision)</p>
+                </div>
+                <div class="api-status">
+                    <span class="dot">●</span> API CONNECTED
+                </div>
+            </header>
+
+            <section id="ekg-tool" class="diagnostic-panel active-tool">
+                <div class="panel-header">
+                    <h3><i class="fa-solid fa-file-waveform"></i> EKG Strip Analysis</h3>
+                    <p>Unggah foto strip EKG untuk interpretasi ritme, interval, dan morfologi gelombang.</p>
+                </div>
+
+                <div class="analysis-workspace">
+                    <div class="upload-zone-wrapper">
+                        <div class="glass-card upload-box" onclick="document.getElementById('ekgInput').click()">
+                            <input type="file" id="ekgInput" accept="image/*" hidden onchange="handleImageUpload(this, 'ekg')">
+                            <div id="ekgPreviewArea" class="preview-placeholder">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <p>Klik untuk Unggah Foto EKG</p>
+                                <small>Format: JPG, PNG, DICOM</small>
+                            </div>
+                            <img id="ekgImage" class="image-preview hidden">
+                        </div>
+                    </div>
+
+                    <div class="glass-card result-box">
+                        <div id="ekgResultContent" class="empty-result">
+                            <i class="fa-solid fa-robot"></i>
+                            <p>Menunggu Data Citra...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cxr-tool" class="diagnostic-panel">
+                <div class="panel-header">
+                    <h3><i class="fa-solid fa-rib-cage"></i> Chest X-Ray Analysis</h3>
+                    <p>Analisis rontgen dada untuk deteksi pembesaran jantung (Cardiomegaly) dan kondisi paru.</p>
+                </div>
+
+                <div class="analysis-workspace">
+                    <div class="upload-zone-wrapper">
+                        <div class="glass-card upload-box" onclick="document.getElementById('cxrInput').click()">
+                            <input type="file" id="cxrInput" accept="image/*" hidden onchange="handleImageUpload(this, 'cxr')">
+                            <div id="cxrPreviewArea" class="preview-placeholder">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <p>Klik untuk Unggah Rontgen</p>
+                            </div>
+                            <div class="image-container relative">
+                                <img id="cxrImage" class="image-preview hidden">
+                                <div id="heatmapOverlay" class="heatmap hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card result-box">
+                        <div id="cxrResultContent" class="empty-result">
+                            <i class="fa-solid fa-robot"></i>
+                            <p>Menunggu Data Citra...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="js/gemini.js"></script> 
+    <script src="js/doctor.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardiCare | Patient Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/patient.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo-area">
+                <h1><i class="fa-solid fa-heart-pulse" style="color: var(--primary);"></i> CardiCare</h1>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali ke Portal
+                </a>
+                <div class="separator">MODULES</div>
+                <a href="#" class="nav-item active" onclick="switchTab('nutri')">
+                    <i class="fa-solid fa-apple-whole"></i> Nutri-Guard
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('meds')">
+                    <i class="fa-solid fa-pills"></i> Med-Shield
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <header>
+                <div class="user-greeting">
+                    <h2>Patient Engine</h2>
+                    <p>AI-Powered Daily Health Assistant</p>
+                </div>
+            </header>
+
+            <section id="nutri-tab" class="module-section active-section">
+                <div class="scanner-layout">
+                    <div class="glass-card upload-zone" id="dropZone">
+                        <input type="file" id="foodInput" accept="image/*" hidden>
+                        <div class="upload-content" onclick="document.getElementById('foodInput').click()">
+                            <div class="scan-icon-wrapper">
+                                <i class="fa-solid fa-camera"></i>
+                            </div>
+                            <h3>Scan Makanan</h3>
+                            <p>Upload foto makanan untuk analisa Garam, Lemak & Gula.</p>
+                        </div>
+                        
+                        <div id="scanPreview" class="scan-preview hidden">
+                            <img id="previewImg" src="" alt="Food Preview">
+                            <div class="laser-scanner"></div>
+                            <div class="scanning-text">AI VISION ANALYZING...</div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card result-zone" id="nutriResult">
+                        <div class="placeholder-state">
+                            <i class="fa-solid fa-utensils"></i>
+                            <p>Hasil analisa nutrisi akan muncul di sini.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="meds-tab" class="module-section">
+                <div class="meds-layout">
+                    <div class="glass-card input-panel">
+                        <h3><i class="fa-solid fa-shield-halved"></i> Cek Interaksi Obat</h3>
+                        <p style="margin-bottom: 2rem; color: #64748B;">Pastikan kombinasi obat Anda aman untuk jantung.</p>
+                        
+                        <div class="drug-inputs">
+                            <div class="input-group">
+                                <label>Obat Pertama</label>
+                                <input type="text" id="drug1" placeholder="Contoh: Aspirin" list="drugList">
+                            </div>
+                            <div class="icon-exchange">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                            <div class="input-group">
+                                <label>Obat Kedua</label>
+                                <input type="text" id="drug2" placeholder="Contoh: Warfarin" list="drugList">
+                            </div>
+                        </div>
+
+                        <button class="btn-check" onclick="checkInteraction()">Analisa Keamanan</button>
+                        
+                        <datalist id="drugList">
+                            <option value="Aspirin">
+                            <option value="Warfarin">
+                            <option value="Simvastatin">
+                            <option value="Amlodipine">
+                            <option value="Ibuprofen">
+                            <option value="Clopidogrel">
+                            <option value="Bisoprolol">
+                        </datalist>
+                    </div>
+
+                    <div id="medsResult" class="glass-card result-panel hidden">
+                        </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+   <script src="js/config.js"></script> 
+    
+    <script src="js/gemini.js"></script>
+    
+    <script src="js/patient.js"></script>
+
+</body>
+</html>

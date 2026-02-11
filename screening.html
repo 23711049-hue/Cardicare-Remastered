@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardiCare | Clinical Screening</title>
+    <link rel="stylesheet" href="css/screening.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="screening-container">
+        
+        <header class="screening-header">
+            <button onclick="window.location.href='index.html'" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Portal</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="step-indicator">Langkah <span id="currentStepNum">1</span> dari 4</div>
+        </header>
+
+        <form id="screeningForm" onsubmit="return false;">
+            
+            <div class="form-step active" data-step="1">
+                <h2>Profil Risiko Dasar</h2>
+                <p class="subtitle">Data ini menentukan baseline risiko kardiovaskular Anda.</p>
+                
+                <div class="question-group">
+                    <label>Berapa Usia Anda?</label>
+                    <input type="number" id="age" class="input-field" placeholder="Contoh: 45">
+                </div>
+
+                <div class="question-group">
+                    <label>Apakah Anda Merokok?</label>
+                    <div class="radio-options">
+                        <label class="radio-card">
+                            <input type="radio" name="smoker" value="yes">
+                            <span>Ya, Aktif</span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="smoker" value="no">
+                            <span>Tidak / Sudah Berhenti</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <label>Apakah Anda memiliki riwayat Hipertensi atau Diabetes?</label>
+                    <div class="radio-options">
+                        <label class="radio-card">
+                            <input type="radio" name="comorbid" value="yes">
+                            <span>Ya, Ada</span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="comorbid" value="no">
+                            <span>Tidak Ada</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step" data-step="2">
+                <h2>Keluhan Dada</h2>
+                <p class="subtitle">Deteksi dini gejala Angina Pektoris / Penyumbatan.</p>
+                
+                <div class="question-group">
+                    <label>Apakah Anda sering merasakan nyeri dada / rasa berat / seperti ditindih?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="toggleSubQuestion('chestPainDetails', true)">
+                            <input type="radio" name="chest_pain" value="yes">
+                            <span>Ya, Pernah</span>
+                        </label>
+                        <label class="radio-card" onclick="toggleSubQuestion('chestPainDetails', false)">
+                            <input type="radio" name="chest_pain" value="no">
+                            <span>Tidak Pernah</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="chestPainDetails" class="hidden-panel">
+                    <div class="question-group warning-bg">
+                        <label><i class="fa-solid fa-triangle-exclamation"></i> Apakah nyeri menjalar ke leher, rahang, atau lengan kiri?</label>
+                        <div class="radio-options">
+                            <label class="radio-card">
+                                <input type="radio" name="pain_radiating" value="yes">
+                                <span>Ya, Menjalar</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="pain_radiating" value="no">
+                                <span>Hanya di Dada</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question-group">
+                        <label>Kapan nyeri biasanya muncul?</label>
+                        <div class="radio-options">
+                            <label class="radio-card">
+                                <input type="radio" name="pain_trigger" value="exertion">
+                                <span>Saat Aktivitas Fisik / Emosi</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="pain_trigger" value="rest">
+                                <span>Saat Istirahat / Tiba-tiba</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step" data-step="3">
+                <h2>Fungsi & Irama Jantung</h2>
+                <p class="subtitle">Deteksi gejala Gagal Jantung (Heart Failure) & Aritmia.</p>
+                
+                <div class="question-group">
+                    <label>Apakah Anda mudah sesak napas?</label>
+                    <div class="radio-options">
+                        <label class="radio-card" onclick="toggleSubQuestion('breathDetails', true)">
+                            <input type="radio" name="breath" value="yes">
+                            <span>Ya</span>
+                        </label>
+                        <label class="radio-card" onclick="toggleSubQuestion('breathDetails', false)">
+                            <input type="radio" name="breath" value="no">
+                            <span>Tidak</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="breathDetails" class="hidden-panel">
+                    <div class="question-group warning-bg">
+                        <label>Apakah Anda perlu tidur dengan bantal tinggi agar tidak sesak (Orthopnea)?</label>
+                        <div class="radio-options">
+                            <label class="radio-card">
+                                <input type="radio" name="orthopnea" value="yes">
+                                <span>Ya</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="orthopnea" value="no">
+                                <span>Tidak</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="question-group">
+                        <label>Apakah kaki Anda sering bengkak di sore hari?</label>
+                        <div class="radio-options">
+                            <label class="radio-card">
+                                <input type="radio" name="edema" value="yes">
+                                <span>Ya</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="edema" value="no">
+                                <span>Tidak</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #ddd;">
+
+                <div class="question-group">
+                    <label class="danger-label">Riwayat Kesadaran (Penting)</label>
+                    <label>Apakah Anda pernah pingsan mendadak (Syncope) atau jantung berdebar sangat kencang tanpa sebab?</label>
+                    <div class="radio-options">
+                        <label class="radio-card">
+                            <input type="radio" name="syncope" value="yes">
+                            <span>Ya, Pernah</span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="syncope" value="no">
+                            <span>Tidak</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step" data-step="4">
+                <div id="resultContainer" class="result-card loading">
+                    <i class="fa-solid fa-circle-notch fa-spin result-icon"></i>
+                    <h2>Menganalisa Data Klinis...</h2>
+                    <p>AI sedang mencocokkan gejala dengan pola penyakit jantung.</p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button id="prevBtn" class="btn-secondary" onclick="changeStep(-1)" disabled>Kembali</button>
+                <button id="nextBtn" class="btn-primary" onclick="changeStep(1)">Lanjut</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="js/screening.js"></script>
+</body>
+</html>

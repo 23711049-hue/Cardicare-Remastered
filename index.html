@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardiCare Dashboard</title>
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="portal-container">
+        
+        <header class="brand-header">
+            <div style="font-size: 3.5rem; color: #2563EB; margin-bottom: 1rem;">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <h1>CardiCare Intelligence</h1>
+            <p>Platform Kesehatan Jantung Terintegrasi: Deteksi Dini & Diagnosa AI.</p>
+        </header>
+
+        <section class="screening-section" onclick="window.location.href='screening.html'">
+            <div class="pulse-circle"></div>
+            <div class="screening-content">
+                <h2>Cek Risiko Jantung Sekarang</h2>
+                <p>Lakukan screening mandiri dengan AI Adaptive Questionnaire untuk deteksi dini risiko gagal jantung.</p>
+                <button class="btn-pulse">Mulai Screening <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </section>
+
+        <section class="glass-card" style="margin-top: 1rem; border: 1px solid rgba(37, 99, 235, 0.2);">
+            <h3 style="margin-bottom: 1.5rem; color: var(--primary); display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Aktivitas Terakhir
+            </h3>
+            <div id="dashboard-history" class="history-list">
+                <p style="text-align:center; padding: 2rem; color: #94A3B8;">Memuat data medis...</p>
+            </div>
+        </section>
+
+        <div class="dual-interface">
+            <div class="role-card patient-card" onclick="location.href='patient.html'">
+                <div class="role-icon"><i class="fa-solid fa-user-shield"></i></div>
+                <h3>Portal Pasien</h3>
+                <p>Asisten harian untuk Nutrisi (Nutri-Guard) dan Keamanan Obat (Med-Shield).</p>
+                <span class="role-badge">Personal Use</span>
+            </div>
+
+            <div class="role-card doctor-card" onclick="location.href='doctor.html'">
+                <div class="role-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                <h3>Konsol Dokter</h3>
+                <p>Alat diagnosa klinis canggih untuk interpretasi EKG & Rontgen Dada.</p>
+                <span class="role-badge">Professional Access</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script>
+        function renderDashboard() {
+            // Pastikan fungsi getHistory() tersedia dari storage.js
+            const history = typeof getHistory === 'function' ? getHistory() : []; 
+            const container = document.getElementById('dashboard-history');
+
+            if (!container) return;
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 2rem; opacity: 0.5;">
+                        <i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Belum ada riwayat diagnosa terdeteksi.</p>
+                    </div>`;
+                return;
+            }
+
+            // Render 3 data terbaru agar dashboard tetap rapi
+            container.innerHTML = history.slice(0, 3).map(item => {
+                const isDanger = item.result.severity === 'danger' || item.result.status === 'danger';
+                const color = isDanger ? '#EF4444' : (item.result.severity === 'warning' ? '#F59E0B' : '#10B981');
+                const title = item.result.food_name || item.result.rhythm || item.result.impression || "Medical Check";
+                
+                return `
+                    <div class="history-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1.2rem; border-bottom: 1px solid rgba(0,0,0,0.05); animation: fadeIn 0.5s ease;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div style="background: ${color}15; color: ${color}; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-size: 1.2rem;">
+                                <i class="fa-solid ${item.type === 'food' ? 'fa-utensils' : 'fa-heart-pulse'}"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.7rem; font-weight: 800; color: #94A3B8; text-transform: uppercase;">${item.type}</div>
+                                <div style="font-weight: 700; color: #1E293B;">${title}</div>
+                                <div style="font-size: 0.75rem; color: #64748B;">${item.date}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="background: ${color}10; color: ${color}; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; border: 1px solid ${color}30;">
+                                ${(item.result.severity || item.result.status || 'NORMAL').toUpperCase()}
+                            </span>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        // Jalankan saat dashboard selesai dimuat
+        window.onload = renderDashboard;
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+/* Layout Specifics */
+.scanner-layout, .meds-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .scanner-layout, .meds-layout { grid-template-columns: 1fr; }
+}
+
+/* --- NUTRI-GUARD STYLES --- */
+.upload-zone {
+    text-align: center;
+    border: 2px dashed #CBD5E1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.upload-zone:hover { border-color: var(--primary); background: rgba(37, 99, 235, 0.05); }
+
+.scan-icon-wrapper {
+    width: 80px; height: 80px; background: #EFF6FF; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: var(--primary); margin-bottom: 1rem;
+}
+
+/* Image Preview & Laser Animation */
+.scan-preview {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: black; z-index: 10;
+}
+
+.scan-preview img {
+    width: 100%; height: 100%; object-fit: cover; opacity: 0.6;
+}
+
+.laser-scanner {
+    position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    background: #00FF88;
+    box-shadow: 0 0 20px #00FF88, 0 0 40px #00FF88;
+    animation: scanMove 2s infinite linear;
+    z-index: 15;
+}
+
+.scanning-text {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    color: #00FF88; font-family: 'Courier New', monospace; font-weight: bold;
+    letter-spacing: 2px; animation: blink 1s infinite; z-index: 15;
+}
+
+@keyframes scanMove { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* Result Zone */
+.result-zone { padding: 2rem; position: relative; }
+.placeholder-state {
+    text-align: center; color: #94A3B8; margin-top: 30%;
+}
+.placeholder-state i { font-size: 4rem; margin-bottom: 1rem; opacity: 0.3; }
+
+/* Nutrition Bar Styles */
+.nutrient-row { margin-bottom: 1.5rem; }
+.nutrient-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 600; }
+.bar-bg { height: 10px; background: #E2E8F0; border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 5px; transition: width 1s ease-out; }
+
+.bg-danger { background: #EF4444; }
+.bg-warning { background: #F59E0B; }
+.bg-success { background: #10B981; }
+
+/* --- MED-SHIELD STYLES --- */
+.drug-inputs {
+    display: flex; align-items: center; gap: 1rem; margin: 2rem 0;
+}
+.input-group { flex: 1; }
+.input-group input {
+    width: 100%; padding: 1rem; border: 1px solid #CBD5E1; border-radius: 12px;
+    font-size: 1rem; outline: none; transition: border-color 0.3s;
+}
+.input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+.icon-exchange { color: #94A3B8; font-size: 1.2rem; }
+
+.btn-check {
+    width: 100%; padding: 1rem; background: var(--primary); color: white;
+    border: none; border-radius: 50px; font-weight: 700; cursor: pointer;
+    font-size: 1.1rem; transition: transform 0.2s;
+}
+.btn-check:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37,99,235,0.3); }
+
+/* Interaction Result */
+.interaction-alert {
+    padding: 1.5rem; border-radius: 16px; text-align: center;
+    animation: slideUp 0.5s ease;
+}
+.alert-danger { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+.alert-safe { background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534; }
+
+/* Tab Utilities */
+.module-section { display: none; animation: fadeIn 0.4s ease; }
+.active-section { display: block; }
+.hidden { display: none !important; }
