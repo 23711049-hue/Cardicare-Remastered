@@ -4,7 +4,7 @@
    ========================================= */
 
 // API KEY ANDA (Pastikan pakai key yang ada kuotanya/Lite)
-const API_KEY = 'AIzaSyCr17O371ytM7vEUPN7XTG1whk2ZEQa73s'; 
+
 
 // Menggunakan Gemini 2.5 Flash Lite
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${API_KEY}`;
