@@ -237,3 +237,131 @@ function scrollToBottom() {
     const chatContainer = document.getElementById('chat-container');
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+/* =========================================
+   PATIENT PORTAL CONTROLLER
+   ========================================= */
+
+// 1. LOGIKA PINDAH TAB (Nutri <-> Meds)
+function switchTab(tabName) {
+    // Sembunyikan semua section
+    document.getElementById('nutri-tab').classList.add('hidden');
+    document.getElementById('meds-tab').classList.add('hidden');
+    
+    // Matikan state aktif di sidebar
+    document.getElementById('nav-nutri').classList.remove('active');
+    document.getElementById('nav-meds').classList.remove('active');
+
+    // Munculkan yang dipilih
+    document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+    document.getElementById(`nav-${tabName}`).classList.add('active');
+}
+
+// 2. CHATBOT MEDSHIELD
+function handleEnter(e) {
+    if (e.key === 'Enter') sendDrugConsultation();
+}
+
+async function sendDrugConsultation() {
+    const inputField = document.getElementById('drugInput');
+    const userText = inputField.value.trim();
+
+    if (!userText) return;
+
+    // Tampilkan Pesan User
+    appendMessage(userText, 'user');
+    inputField.value = ''; 
+    
+    // Loading State
+    const loadingId = appendLoading();
+    scrollToBottom();
+
+    try {
+        // Panggil AI (Pastikan askGeminiChat ada di gemini.js)
+        const reply = await askGeminiChat(userText);
+        removeMessage(loadingId);
+        appendMessage(reply, 'bot');
+    } catch (error) {
+        removeMessage(loadingId);
+        appendMessage("Maaf, koneksi ke Apoteker AI terputus. Coba lagi.", 'bot');
+    }
+    
+    scrollToBottom();
+}
+
+// Helper Chat
+function appendMessage(text, sender) {
+    const chatContainer = document.getElementById('chat-container');
+    const div = document.createElement('div');
+    div.className = `message ${sender}-message`;
+    div.innerHTML = `
+        <div class="msg-avatar"><i class="fa-solid ${sender === 'bot' ? 'fa-robot' : 'fa-user'}"></i></div>
+        <div class="msg-content">${text}</div>
+    `;
+    chatContainer.appendChild(div);
+}
+
+function appendLoading() {
+    const chatContainer = document.getElementById('chat-container');
+    const id = 'loading-' + Date.now();
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'message bot-message';
+    div.innerHTML = `
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-content"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengecek interaksi obat...</div>
+    `;
+    chatContainer.appendChild(div);
+    return id;
+}
+
+function removeMessage(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+function scrollToBottom() {
+    const chatContainer = document.getElementById('chat-container');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// 3. LOGIKA NUTRI-GUARD (Upload Makanan)
+function handleFoodUpload(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async function(e) {
+            // Preview
+            document.querySelector('.upload-content').classList.add('hidden');
+            document.getElementById('scanPreview').classList.remove('hidden');
+            document.getElementById('previewImg').src = e.target.result;
+
+            const base64 = e.target.result.split(',')[1];
+            
+            // Panggil AI Vision (Food Mode)
+            try {
+                const result = await askGeminiVision(base64, 'food');
+                renderNutriResult(result);
+            } catch (err) {
+                alert("Gagal analisa makanan: " + err.message);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function renderNutriResult(data) {
+    const container = document.getElementById('nutriResult');
+    const statusColor = data.status === 'danger' ? '#ef4444' : (data.status === 'moderate' ? '#f59e0b' : '#10b981');
+    
+    container.innerHTML = `
+        <div style="padding: 1.5rem;">
+            <h3 style="color:${statusColor}; margin-bottom:1rem;">${data.food_name}</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:1rem;">
+                <div class="stat-box">Calories: <b>${data.calories}</b></div>
+                <div class="stat-box">Sodium: <b style="color:${statusColor}">${data.sodium}</b></div>
+            </div>
+            <p style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:8px;">${data.advice}</p>
+        </div>
+    `;
+}
