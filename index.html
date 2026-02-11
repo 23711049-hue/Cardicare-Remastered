@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CardiCare | Clinical Dashboard & Education</title>
+    <title>CardiCare | Central Dashboard</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -12,240 +12,305 @@
         :root {
             --bg-dark: #0f172a;
             --glass: rgba(30, 41, 59, 0.7);
-            --glass-hover: rgba(51, 65, 85, 0.9);
             --border: rgba(255, 255, 255, 0.1);
-            --primary: #ef4444; /* Merah Jantung */
-            --accent: #3b82f6; /* Biru Medis */
-            --gold: #f59e0b;
+            --primary: #ef4444;
+            --accent: #3b82f6;
+            --success: #10b981;
         }
 
         body {
             background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, rgba(239,68,68,0.15), transparent 60%);
             color: white;
             font-family: 'Inter', sans-serif;
             margin: 0;
-            overflow: hidden; /* Sidebar diam, konten scroll */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .app-container { display: flex; height: 100vh; }
+        /* CONTAINER UTAMA (Fokus Tengah) */
+        .main-container {
+            width: 100%;
+            max-width: 850px; /* Supaya tidak terlalu lebar */
+            padding: 2rem;
+            box-sizing: border-box;
+        }
 
-        /* SCROLLBAR CANTIK */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        /* HEADER LOGO */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+        .brand-header h1 { font-size: 2.5rem; margin: 0; font-weight: 800; letter-spacing: -1px; }
+        .brand-header p { color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem; }
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px;
-            background: #1e293b;
-            padding: 1.5rem;
-            display: flex; flex-direction: column;
-            border-right: 1px solid var(--border);
-            z-index: 10;
-        }
-        .logo-area h1 { font-size: 1.5rem; margin: 0 0 2rem 0; font-weight: 800; letter-spacing: -1px; }
-        .nav-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 15px;
-            color: #94a3b8; text-decoration: none;
-            border-radius: 10px; margin-bottom: 5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--primary);
-        }
-        .nav-item.active { border-left: 3px solid var(--primary); }
-        .separator { margin: 1.5rem 0 0.5rem 10px; font-size: 0.7rem; color: #64748b; font-weight: 800; letter-spacing: 1px; }
-
-        /* MAIN CONTENT AREA */
-        .main-content { 
-            flex: 1; 
-            padding: 2rem; 
-            overflow-y: auto; 
-            background: radial-gradient(circle at top right, rgba(239,68,68,0.05), transparent 40%);
-        }
-        
-        /* HERO SECTION (Selamat Datang) */
-        .hero-section {
-            margin-bottom: 2.5rem;
-            animation: slideDown 0.8s ease;
-        }
-        .hero-title { font-size: 2rem; font-weight: 800; margin: 0; background: linear-gradient(to right, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero-subtitle { color: #94a3b8; margin-top: 0.5rem; font-size: 1rem; max-width: 600px; }
-
-        /* MENU GRID (PENGGANTI RECENT ACTIVITY) */
-        .menu-grid {
+        /* --- LAYOUT TOMBOL BARU (GRID AREA) --- */
+        .action-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr 1fr; /* 2 Kolom */
+            grid-template-rows: auto auto auto; /* 3 Baris */
             gap: 1.5rem;
-            margin-bottom: 4rem; /* Jarak ke bagian edukasi */
+            grid-template-areas: 
+                "risk risk"      /* Baris 1: Full */
+                "doctor patient" /* Baris 2: Split */
+                "edu edu";       /* Baris 3: Full */
+            margin-bottom: 4rem;
         }
 
+        /* CARD STYLE UMUM */
         .menu-card {
             background: var(--glass);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
+            border-radius: 20px;
+            padding: 2rem;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            display: flex; flex-direction: column; justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
+            backdrop-filter: blur(10px);
+        }
+        .menu-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .menu-card i { font-size: 2.5rem; margin-right: 1.5rem; }
+        .text-group h3 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+        .text-group p { margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.8; }
+        .arrow-btn { background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        /* 1. TOMBOL CEK RISIKO (BESAR) */
+        .area-risk { 
+            grid-area: risk; 
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(30, 41, 59, 0.9));
+            border-color: rgba(239, 68, 68, 0.4);
+            height: 140px;
+        }
+        .area-risk:hover { border-color: var(--primary); }
+
+        /* 2. TOMBOL PORTAL (KECIL) */
+        .area-doctor { 
+            grid-area: doctor;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(30, 41, 59, 0.8));
+            flex-direction: column; text-align: center; justify-content: center;
             height: 180px;
         }
-
-        .menu-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        
-        /* Card Specific Colors */
-        .card-survey { background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(30, 41, 59, 0.8)); border: 1px solid rgba(239, 68, 68, 0.3); }
-        .card-survey:hover { border-color: var(--primary); }
-        
-        .card-patient { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(30, 41, 59, 0.8)); }
-        .card-doctor { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(30, 41, 59, 0.8)); }
-
-        .menu-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-        .menu-title { font-size: 1.2rem; font-weight: 700; margin: 0; }
-        .menu-desc { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
-        .arrow-icon { position: absolute; bottom: 1.5rem; right: 1.5rem; opacity: 0.5; transition: 0.3s; }
-        .menu-card:hover .arrow-icon { opacity: 1; transform: translateX(5px); }
-
-        /* --- STYLES UNTUK EDUKASI (PART 2 NANTI) --- */
-        .education-header { 
-            display: flex; align-items: center; gap: 15px; margin-bottom: 2rem; 
-            padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+        .area-patient { 
+            grid-area: patient;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(30, 41, 59, 0.8));
+            flex-direction: column; text-align: center; justify-content: center;
+            height: 180px;
         }
-        .edu-badge { background: var(--accent); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; }
-        
-        /* Flip Card Styles (Disiapkan untuk Part 2) */
-        .flip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-        .flip-card { background-color: transparent; width: 100%; height: 240px; perspective: 1000px; cursor: pointer; }
+        .area-doctor i, .area-patient i { margin: 0 0 1rem 0; }
+
+        /* 3. TOMBOL ENSIKLOPEDIA (BESAR) */
+        .area-edu { 
+            grid-area: edu;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(30, 41, 59, 0.8));
+            height: 120px;
+        }
+
+        /* --- EDUKASI SECTION (HIDDEN AWALNYA / SCROLL TARGET) --- */
+        #education-target { scroll-margin-top: 2rem; }
+        .edu-content { margin-top: 4rem; opacity: 0.8; transition: 0.5s; }
+        .edu-content:hover { opacity: 1; }
+
+        /* FLIP CARDS & STATS (CSS DARI SEBELUMNYA DIPERTAHANKAN) */
+        .flip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .flip-card { background: transparent; height: 240px; perspective: 1000px; cursor: pointer; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .flip-front { background: rgba(30, 41, 59, 0.8); }
         .flip-back { background: linear-gradient(135deg, #064e3b, #065f46); transform: rotateY(180deg); }
 
-        /* Animation Keyframes */
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* ANIMATION */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* MODAL SURVEY */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-card {
+            background: #1e293b; width: 500px; max-width: 90%;
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; color: #94a3b8; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 10px; outline: none; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <nav class="sidebar">
-            <div class="logo-area">
-                <h1><i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> CardiCare</h1>
-            </div>
-            <div class="nav-menu">
-                <a href="#" class="nav-item active">
-                    <i class="fa-solid fa-house"></i> Beranda
-                </a>
-                <div class="separator">LAYANAN UTAMA</div>
-                <a href="#kuesioner-modal" onclick="openSurvey()" class="nav-item">
-                    <i class="fa-solid fa-clipboard-check"></i> Cek Risiko
-                </a>
-                <a href="patient.html" class="nav-item">
-                    <i class="fa-solid fa-pills"></i> Portal Pasien
-                </a>
-                <a href="doctor.html" class="nav-item">
-                    <i class="fa-solid fa-user-doctor"></i> Portal Dokter
-                </a>
-                <div class="separator">EDUKASI</div>
-                <a href="#education-start" class="nav-item">
-                    <i class="fa-solid fa-book-open"></i> Ensiklopedia
-                </a>
-            </div>
-        </nav>
+    <div class="main-container">
+        
+        <header class="brand-header">
+            <h1><i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> CardiCare</h1>
+            <p>Intelligence Cardiac Health System</p>
+        </header>
 
-        <main class="main-content">
+        <div class="action-grid">
             
-            <div class="hero-section">
-                <h2 class="hero-title">Halo, Selamat Datang di CardiCare</h2>
-                <p class="hero-subtitle">Platform kesehatan jantung terintegrasi AI. Mulai deteksi dini atau pelajari kesehatan jantung Anda hari ini.</p>
+            <div class="menu-card area-risk" onclick="openSurvey()">
+                <div style="display:flex; align-items:center;">
+                    <i class="fa-solid fa-clipboard-check" style="color: #fff;"></i>
+                    <div class="text-group">
+                        <h3>Cek Risiko Jantung</h3>
+                        <p>Deteksi dini berbasis kuesioner medis (2 Menit).</p>
+                    </div>
+                </div>
+                <div class="arrow-btn"><i class="fa-solid fa-arrow-right"></i></div>
             </div>
 
-            <div class="menu-grid animate-fade-up">
-                
-                <div class="menu-card card-survey" onclick="openSurvey()">
-                    <div>
-                        <i class="fa-solid fa-heart-circle-check menu-icon" style="color: #ef4444;"></i>
-                        <h3 class="menu-title">Cek Risiko Jantung</h3>
-                        <p class="menu-desc">Kuesioner deteksi dini berbasis skor risiko kardiovaskular. Hanya 2 menit.</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-right arrow-icon"></i>
+            <div class="menu-card area-doctor" onclick="window.location.href='doctor.html'">
+                <i class="fa-solid fa-user-doctor" style="color: #3b82f6;"></i>
+                <div class="text-group">
+                    <h3>Portal Dokter</h3>
+                    <p>Analisa EKG & Rontgen</p>
                 </div>
-
-                <div class="menu-card card-patient" onclick="window.location.href='patient.html'">
-                    <div>
-                        <i class="fa-solid fa-hospital-user menu-icon" style="color: #10B981;"></i>
-                        <h3 class="menu-title">Portal Pasien</h3>
-                        <p class="menu-desc">Akses NutriGuard (Scan Makanan) & MedShield (Chat Obat).</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                </div>
-
-                <div class="menu-card card-doctor" onclick="window.location.href='doctor.html'">
-                    <div>
-                        <i class="fa-solid fa-user-doctor menu-icon" style="color: #3b82f6;"></i>
-                        <h3 class="menu-title">Portal Dokter</h3>
-                        <p class="menu-desc">Analisa klinis EKG & Rontgen Dada dengan bantuan AI Vision.</p>
-                    </div>
-                    <i class="fa-solid fa-arrow-right arrow-icon"></i>
-                </div>
-
             </div>
 
-            <div id="education-start"></div>
-            <div class="education-section animate-fade-up" style="margin-top: 4rem;">
-                
-                <div class="education-header">
-                    <h3 style="margin:0; font-size:1.5rem;">Apa yang Perlu Anda Tahu?</h3>
-                    <span class="edu-badge">LAPORAN NASIONAL 2023</span>
+            <div class="menu-card area-patient" onclick="window.location.href='patient.html'">
+                <i class="fa-solid fa-hospital-user" style="color: #10b981;"></i>
+                <div class="text-group">
+                    <h3>Portal Pasien</h3>
+                    <p>NutriGuard & Obat</p>
                 </div>
+            </div>
 
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem; margin-bottom:3rem;">
-                    
-                    <div style="background:rgba(30,41,59,0.6); padding:1.5rem; border-radius:16px; border:1px solid rgba(255,255,255,0.1);">
-                        <h4 style="color:#f59e0b; margin:0 0 10px 0;"><i class="fa-solid fa-briefcase"></i> Risiko Pekerjaan</h4>
-                        <div style="font-size:2.5rem; font-weight:800; color:white;">2.04%</div>
-                        <p style="color:#94a3b8; font-size:0.9rem; line-height:1.5;">
-                            Prevalensi tertinggi ditemukan pada <b>Aparatur Negara (PNS/TNI/Polri/BUMN)</b>. Lingkungan kerja sedenter dan stres tinggi adalah pemicu utama.
-                        </p>
-                        <div style="height:6px; background:#334155; border-radius:3px; margin-top:10px;">
-                            <div style="width:75%; height:100%; background:#f59e0b; border-radius:3px;"></div>
+            <div class="menu-card area-edu" onclick="scrollToEdu()">
+                <div style="display:flex; align-items:center;">
+                    <i class="fa-solid fa-book-medical" style="color: #f59e0b;"></i>
+                    <div class="text-group">
+                        <h3>Ensiklopedia Jantung</h3>
+                        <p>Mitos, Fakta, dan Data Epidemiologi Nasional.</p>
+                    </div>
+                </div>
+                <div class="arrow-btn"><i class="fa-solid fa-arrow-down"></i></div>
+            </div>
+        </div>
+
+        <div id="education-target" class="edu-content">
+            <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 2rem;">
+                <i class="fa-solid fa-lightbulb" style="color: #f59e0b;"></i> Wawasan Kesehatan
+            </h3>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="color: #ef4444; font-size: 2rem; font-weight: 800;">2.04%</div>
+                    <p style="margin: 5px 0 0 0; color: #cbd5e1; font-size: 0.9rem;">Prevalensi Tertinggi pada <b>Aparatur Negara</b> (PNS/TNI) akibat stres kerja.</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="color: #3b82f6; font-size: 2rem; font-weight: 800;">High</div>
+                    <p style="margin: 5px 0 0 0; color: #cbd5e1; font-size: 0.9rem;">Risiko di <b>Wilayah Urban</b> (Jakarta & DIY) jauh lebih tinggi dari pedesaan.</p>
+                </div>
+            </div>
+
+            <div class="flip-grid">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-front">
+                            <span style="background:#ef4444; color:white; padding:5px 10px; border-radius:20px; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">MITOS</span>
+                            <p style="font-size:1.1rem; font-style:italic;">"Penyakit jantung hanya menyerang orang tua."</p>
+                            <small style="color:#94a3b8; margin-top:1rem;"><i class="fa-solid fa-hand-pointer"></i> Klik Cek Fakta</small>
                         </div>
-                    </div>
-
-                    <div style="background:rgba(30,41,59,0.6); padding:1.5rem; border-radius:16px; border:1px solid rgba(255,255,255,0.1);">
-                        <h4 style="color:#8b5cf6; margin:0 0 10px 0;"><i class="fa-solid fa-city"></i> Urban vs Rural</h4>
-                        <div style="font-size:1.2rem; font-weight:800; color:white; margin-bottom:5px;">DKI Jakarta & DIY</div>
-                        <p style="color:#94a3b8; font-size:0.9rem; line-height:1.5;">
-                            Wilayah urban mencatat kasus tertinggi (DIY 1.67%, Jakarta 1.56%) dibandingkan wilayah rural (Papua Pegunungan 0.11%). Gaya hidup kota besar berkorelasi langsung dengan risiko jantung.
-                        </p>
-                    </div>
-
-                    <div style="background:rgba(30,41,59,0.6); padding:1.5rem; border-radius:16px; border:1px solid rgba(255,255,255,0.1);">
-                        <h4 style="color:#ef4444; margin:0 0 10px 0;"><i class="fa-solid fa-globe"></i> Krisis Global</h4>
-                        <div style="font-size:2.5rem; font-weight:800; color:white;">32%</div>
-                        <p style="color:#94a3b8; font-size:0.9rem; line-height:1.5;">
-                            Dari seluruh kematian global, 32% disebabkan oleh penyakit kardiovaskular (WHO). Ini adalah "Pembunuh Nomor 1" di dunia.
-                        </p>
-                        <div style="height:6px; background:#334155; border-radius:3px; margin-top:10px;">
-                            <div style="width:32%; height:100%; background:#ef4444; border-radius:3px;"></div>
+                        <div class="flip-back">
+                            <span style="background:#10b981; color:white; padding:5px 10px; border-radius:20px; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">FAKTA MEDIS</span>
+                            <p>Salah. Usia <b>25-34 tahun</b> kini mendominasi kasus di beberapa daerah urban akibat gaya hidup.</p>
                         </div>
                     </div>
                 </div>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-front">
+                            <span style="background:#ef4444; color:white; padding:5px 10px; border-radius:20px; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">MITOS</span>
+                            <p style="font-size:1.1rem; font-style:italic;">"Orang kurus pasti aman dari sakit jantung."</p>
+                            <small style="color:#94a3b8; margin-top:1rem;"><i class="fa-solid fa-hand-pointer"></i> Klik Cek Fakta</small>
+                        </div>
+                        <div class="flip-back">
+                            <span style="background:#10b981; color:white; padding:5px 10px; border-radius:20px; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">FAKTA MEDIS</span>
+                            <p>Berat badan bukan jaminan. <b>Hipertensi & Kolesterol Genetik</b> tetap mengintai orang kurus.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <h4 style="margin-bottom:1.5rem; font-size:1.3rem;"><i class="fa-solid fa-circle-question" style="color:#ef4444;"></i> Uji Pengetahuan: Mitos atau Fakta?</h4>
-                <div class="flip-grid" style="margin-bottom:3rem;">
-                    
-                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
-                        <div class="flip-card-inner">
-                            <div class="flip-front">
-                                <span style="background:#ef4444; color:white; padding:5px 10px; border-radius:15px; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">MITOS</span>
-                                <p style="font-size:1.1rem; font-style:italic;">"Peny
+            <footer style="text-align: center; color: #64748b; font-size: 0.8rem; padding: 2rem;">
+                &copy; 2024 CardiCare Intelligence System.
+            </footer>
+        </div>
+
+    </div>
+
+    <div id="surveyModal" class="modal-overlay">
+        <div class="modal-card">
+            <div style="padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between;">
+                <h3 style="margin:0;">Deteksi Risiko Dini</h3>
+                <button onclick="closeSurvey()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-xmark fa-lg"></i></button>
+            </div>
+            <div style="padding: 2rem;">
+                <div id="surveyForm">
+                    <div class="form-group"><label>Usia</label><input type="number" id="age" placeholder="Contoh: 45"></div>
+                    <div class="form-group"><label>Merokok?</label><select id="smoker"><option value="no">Tidak</option><option value="yes">Ya</option></select></div>
+                    <div class="form-group"><label>Tekanan Darah</label><select id="bp"><option value="normal">Normal</option><option value="high">Tinggi (>140/90)</option></select></div>
+                    <button onclick="calculateRisk()" style="width:100%; padding:12px; background:#ef4444; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:1rem;">Analisa Risiko</button>
+                </div>
+                <div id="surveyResult" style="margin-top:1.5rem; display:none; padding:1rem; border-radius:10px; text-align:center;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. FUNGSI SCROLL KE ENSIKLOPEDIA
+        function scrollToEdu() {
+            document.getElementById('education-target').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 2. FUNGSI MODAL KUESIONER
+        function openSurvey() {
+            document.getElementById('surveyModal').classList.add('active');
+        }
+        function closeSurvey() {
+            document.getElementById('surveyModal').classList.remove('active');
+            document.getElementById('surveyResult').style.display = 'none';
+        }
+
+        // 3. FUNGSI HITUNG RISIKO (Logic Sederhana)
+        function calculateRisk() {
+            const age = document.getElementById('age').value;
+            const smoker = document.getElementById('smoker').value;
+            const bp = document.getElementById('bp').value;
+
+            if(!age) { alert("Isi usia dulu!"); return; }
+
+            let score = 0;
+            if(age > 45) score += 2;
+            if(smoker === 'yes') score += 3;
+            if(bp === 'high') score += 3;
+
+            const resBox = document.getElementById('surveyResult');
+            resBox.style.display = 'block';
+
+            if(score <= 2) {
+                resBox.style.background = 'rgba(16, 185, 129, 0.2)';
+                resBox.style.border = '1px solid #10b981';
+                resBox.innerHTML = '<h3 style="color:#10b981; margin:0;">RISIKO RENDAH</h3><p>Pertahankan gaya hidup sehat!</p>';
+            } else if(score <= 5) {
+                resBox.style.background = 'rgba(245, 158, 11, 0.2)';
+                resBox.style.border = '1px solid #f59e0b';
+                resBox.innerHTML = '<h3 style="color:#f59e0b; margin:0;">RISIKO SEDANG</h3><p>Waspada! Kurangi faktor risiko.</p>';
+            } else {
+                resBox.style.background = 'rgba(239, 68, 68, 0.2)';
+                resBox.style.border = '1px solid #ef4444';
+                resBox.innerHTML = '<h3 style="color:#ef4444; margin:0;">RISIKO TINGGI</h3><p>Segera konsultasi dokter!</p>';
+            }
+        }
+    </script>
+</body>
+</html>
