@@ -1,109 +1,323 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CardiCare Dashboard</title>
-    <link rel="manifest" href="../manifest.json">
-    <link rel="stylesheet" href="../css/style.css">
+    <title>CardiCare | Clinical Dashboard</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --glass: rgba(30, 41, 59, 0.6);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #ef4444; /* Merah Jantung */
+            --accent: #3b82f6; /* Biru Medis */
+            --success: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .app-container { display: flex; height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #1e293b;
+            padding: 1.5rem;
+            display: flex; flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+        .logo-area h1 { font-size: 1.5rem; margin: 0 0 2rem 0; font-weight: 800; letter-spacing: -1px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 15px;
+            color: #94a3b8; text-decoration: none;
+            border-radius: 10px; margin-bottom: 5px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--primary);
+        }
+        .nav-item.active { border-left: 3px solid var(--primary); }
+        .separator { margin: 1.5rem 0 0.5rem 10px; font-size: 0.7rem; color: #64748b; font-weight: 800; letter-spacing: 1px; }
+
+        /* MAIN CONTENT */
+        .main-content { flex: 1; padding: 2rem; overflow-y: auto; position: relative; }
+        
+        /* HEADER */
+        .dashboard-header {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), transparent);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header-text h2 { margin: 0; font-size: 1.8rem; }
+        .header-text p { color: #94a3b8; margin: 5px 0 0 0; }
+        
+        /* --- SECTION 1: STATISTIK INFOGRAFIS --- */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem; margin-bottom: 2.5rem;
+        }
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .stat-icon { font-size: 2rem; margin-bottom: 1rem; color: var(--accent); }
+        .stat-value { font-size: 2rem; font-weight: 800; margin-bottom: 0.2rem; }
+        .stat-label { color: #94a3b8; font-size: 0.9rem; line-height: 1.4; }
+        .progress-bar { height: 4px; background: #334155; margin-top: 1rem; border-radius: 2px; }
+        .progress-fill { height: 100%; border-radius: 2px; }
+
+        /* --- SECTION 2: MITOS VS FAKTA (FLIP CARDS) --- */
+        .myth-section { margin-bottom: 3rem; }
+        .section-title { font-size: 1.4rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        
+        .flip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        
+        /* Flip Card Logic */
+        .flip-card {
+            background-color: transparent;
+            width: 100%; height: 220px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative; width: 100%; height: 100%;
+            text-align: center; transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-front, .flip-back {
+            position: absolute; width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden; backface-visibility: hidden;
+            border-radius: 16px; padding: 1.5rem;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        /* Front (Mitos) */
+        .flip-front { background: rgba(30, 41, 59, 0.8); }
+        .myth-badge { background: #ef4444; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; }
+        .myth-content { font-size: 1.1rem; color: white; font-style: italic; }
+        .tap-hint { margin-top: 1rem; font-size: 0.8rem; color: #94a3b8; animation: pulse 2s infinite; }
+        
+        /* Back (Fakta) */
+        .flip-back { background: linear-gradient(135deg, #064e3b, #065f46); transform: rotateY(180deg); color: white; }
+        .fact-badge { background: #10b981; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; }
+        
+        /* --- SECTION 3: GENDER & CERDIK --- */
+        .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .info-panel { background: var(--glass); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; }
+        
+        .gender-row { display: flex; justify-content: space-between; margin-top: 1.5rem; gap: 1rem; }
+        .gender-col { flex: 1; padding: 1rem; border-radius: 12px; }
+        .male-col { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); }
+        .female-col { background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.3); }
+        
+        .cerdik-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 1rem; }
+        .cerdik-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center; }
+        .cerdik-letter { font-size: 1.5rem; font-weight: 800; color: var(--success); display: block; }
+        .cerdik-desc { font-size: 0.8rem; color: #cbd5e1; }
+
+        /* Animation */
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        @media (max-width: 900px) { .cols-2 { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
 
-    <div class="portal-container">
-        
-        <header class="brand-header">
-            <div style="font-size: 3.5rem; color: #2563EB; margin-bottom: 1rem;">
-                <i class="fa-solid fa-heart-pulse"></i>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="logo-area">
+                <h1><i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> CardiCare</h1>
             </div>
-            <h1>CardiCare Intelligence</h1>
-            <p>Platform Kesehatan Jantung Terintegrasi: Deteksi Dini & Diagnosa AI.</p>
-        </header>
-
-        <section class="screening-section" onclick="window.location.href='screening.html'">
-            <div class="pulse-circle"></div>
-            <div class="screening-content">
-                <h2>Cek Risiko Jantung Sekarang</h2>
-                <p>Lakukan screening mandiri dengan AI Adaptive Questionnaire untuk deteksi dini risiko gagal jantung.</p>
-                <button class="btn-pulse">Mulai Screening <i class="fa-solid fa-arrow-right"></i></button>
+            <div class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard Utama
+                </a>
+                <div class="separator">APLIKASI DOKTER</div>
+                <a href="doctor.html" class="nav-item">
+                    <i class="fa-solid fa-user-doctor"></i> Portal Dokter (AI)
+                </a>
+                <div class="separator">APLIKASI PASIEN</div>
+                <a href="patient.html" class="nav-item">
+                    <i class="fa-solid fa-hospital-user"></i> Portal Pasien
+                </a>
             </div>
-        </section>
+        </nav>
 
-        <section class="glass-card" style="margin-top: 1rem; border: 1px solid rgba(37, 99, 235, 0.2);">
-            <h3 style="margin-bottom: 1.5rem; color: var(--primary); display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-clock-rotate-left"></i> Riwayat Aktivitas Terakhir
-            </h3>
-            <div id="dashboard-history" class="history-list">
-                <p style="text-align:center; padding: 2rem; color: #94A3B8;">Memuat data medis...</p>
-            </div>
-        </section>
-
-        <div class="dual-interface">
-            <div class="role-card patient-card" onclick="location.href='patient.html'">
-                <div class="role-icon"><i class="fa-solid fa-user-shield"></i></div>
-                <h3>Portal Pasien</h3>
-                <p>Asisten harian untuk Nutrisi (Nutri-Guard) dan Keamanan Obat (Med-Shield).</p>
-                <span class="role-badge">Personal Use</span>
+        <main class="main-content">
+            
+            <div class="dashboard-header">
+                <div class="header-text">
+                    <h2>Pusat Edukasi Kardiovaskular Nasional</h2>
+                    <p>Data Epidemiologi & Panduan Strategis Pemeliharaan Jantung</p>
+                </div>
+                <button onclick="window.location.href='patient.html'" style="background:var(--primary); color:white; border:none; padding:12px 24px; border-radius:30px; cursor:pointer; font-weight:600;">
+                    <i class="fa-solid fa-stethoscope"></i> Cek Kesehatan Saya
+                </button>
             </div>
 
-            <div class="role-card doctor-card" onclick="location.href='doctor.html'">
-                <div class="role-icon"><i class="fa-solid fa-user-doctor"></i></div>
-                <h3>Konsol Dokter</h3>
-                <p>Alat diagnosa klinis canggih untuk interpretasi EKG & Rontgen Dada.</p>
-                <span class="role-badge">Professional Access</span>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-earth-americas stat-icon"></i>
+                    <div class="stat-value">32%</div>
+                    <div class="stat-label">Kematian Global akibat Penyakit Jantung (WHO)</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 32%; background: #ef4444;"></div></div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="fa-solid fa-user-tie stat-icon" style="color: #f59e0b;"></i>
+                    <div class="stat-value">2.04%</div>
+                    <div class="stat-label">Prevalensi Tertinggi pada <b>Aparatur Negara (PNS/TNI/Polri)</b></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 60%; background: #f59e0b;"></div></div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="fa-solid fa-city stat-icon" style="color: #8b5cf6;"></i>
+                    <div class="stat-value">High</div>
+                    <div class="stat-label">Risiko di Wilayah Urban (DKI Jakarta & DIY) lebih tinggi dari Rural</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 85%; background: #8b5cf6;"></div></div>
+                </div>
             </div>
-        </div>
+
+            <div class="myth-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-circle-question" style="color: #ef4444;"></i>
+                    Uji Pengetahuan: Mitos atau Fakta?
+                    <span style="font-size:0.8rem; color:#94a3b8; margin-left:10px;">(Klik kartu untuk melihat jawaban)</span>
+                </div>
+
+                <div class="flip-grid">
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-front">
+                                <div class="myth-badge">MITOS</div>
+                                <div class="myth-content">"Penyakit jantung hanya menyerang orang tua/lansia."</div>
+                                <div class="tap-hint"><i class="fa-solid fa-hand-pointer"></i> Klik untuk Cek Fakta</div>
+                            </div>
+                            <div class="flip-back">
+                                <div class="fact-badge">FAKTA MEDIS</div>
+                                <p style="font-size:0.95rem;">Kelompok usia <b>25-34 tahun</b> kini mendominasi kasus di beberapa daerah. Plak bisa menumpuk sejak kanak-kanak!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-front">
+                                <div class="myth-badge">MITOS</div>
+                                <div class="myth-content">"Badan kurus berarti bebas dari risiko sakit jantung."</div>
+                                <div class="tap-hint"><i class="fa-solid fa-hand-pointer"></i> Klik untuk Cek Fakta</div>
+                            </div>
+                            <div class="flip-back">
+                                <div class="fact-badge">FAKTA MEDIS</div>
+                                <p style="font-size:0.95rem;">Berat badan ideal bukan jaminan. <b>Hipertensi & Kolesterol Genetik</b> tetap bisa menyerang orang kurus.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-front">
+                                <div class="myth-badge">MITOS</div>
+                                <div class="myth-content">"Wanita lebih kebal terhadap serangan jantung dibanding pria."</div>
+                                <div class="tap-hint"><i class="fa-solid fa-hand-pointer"></i> Klik untuk Cek Fakta</div>
+                            </div>
+                            <div class="flip-back">
+                                <div class="fact-badge">FAKTA MEDIS</div>
+                                <p style="font-size:0.95rem;">Setelah <b>menopause</b>, risiko wanita meningkat tajam melebihi pria karena hilangnya hormon estrogen pelindung.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cols-2">
+                
+                <div class="info-panel">
+                    <h3 style="margin:0;"><i class="fa-solid fa-venus-mars"></i> Gejala: Pria vs Wanita</h3>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Jangan salah diagnosa! Gejala bisa sangat berbeda.</p>
+                    
+                    <div class="gender-row">
+                        <div class="gender-col male-col">
+                            <div style="color:#3b82f6; font-weight:800; margin-bottom:0.5rem;"><i class="fa-solid fa-mars"></i> PRIA</div>
+                            <ul style="padding-left:1rem; margin:0; font-size:0.85rem; color:#cbd5e1;">
+                                <li>Nyeri dada hebat ("Ditindih Gajah")</li>
+                                <li>Menjalar ke lengan kiri</li>
+                                <li>Keringat dingin mendadak</li>
+                            </ul>
+                        </div>
+                        <div class="gender-col female-col">
+                            <div style="color:#ec4899; font-weight:800; margin-bottom:0.5rem;"><i class="fa-solid fa-venus"></i> WANITA</div>
+                            <ul style="padding-left:1rem; margin:0; font-size:0.85rem; color:#cbd5e1;">
+                                <li>Kelelahan ekstrem berhari-hari</li>
+                                <li>Mual & Gangguan tidur</li>
+                                <li>Sering dikira "Masuk Angin"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h3 style="margin:0;"><i class="fa-solid fa-shield-heart"></i> Protokol CERDIK</h3>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Strategi Kemenkes untuk Jantung Sehat.</p>
+
+                    <div class="cerdik-list">
+                        <div class="cerdik-item">
+                            <span class="cerdik-letter">C</span>
+                            <span class="cerdik-desc">Cek Kesehatan Rutin</span>
+                        </div>
+                        <div class="cerdik-item">
+                            <span class="cerdik-letter">E</span>
+                            <span class="cerdik-desc">Enyahkan Rokok</span>
+                        </div>
+                        <div class="cerdik-item">
+                            <span class="cerdik-letter">R</span>
+                            <span class="cerdik-desc">Rajin Olahraga</span>
+                        </div>
+                        <div class="cerdik-item">
+                            <span class="cerdik-letter">D</span>
+                            <span class="cerdik-desc">Diet Seimbang</span>
+                        </div>
+                        <div class="cerdik-item">
+                            <span class="cerdik-letter">I</span>
+                            <span class="cerdik-desc">Istirahat Cukup</span>
+                        </div>
+                        <div class="cerdik-item">
+                            <span class="cerdik-letter">K</span>
+                            <span class="cerdik-desc">Kelola Stres</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer style="margin-top: 3rem; text-align: center; color: #64748b; font-size: 0.8rem;">
+                &copy; 2024 CardiCare Intelligence System. Data bersumber dari Laporan Kardiovaskular Nasional & SKI 2023.
+            </footer>
+
+        </main>
     </div>
 
-    <script src="../js/storage.js"></script>
-    <script>
-        function renderDashboard() {
-            // Pastikan fungsi getHistory() tersedia dari storage.js
-            const history = typeof getHistory === 'function' ? getHistory() : []; 
-            const container = document.getElementById('dashboard-history');
-
-            if (!container) return;
-
-            if (history.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding: 2rem; opacity: 0.5;">
-                        <i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>Belum ada riwayat diagnosa terdeteksi.</p>
-                    </div>`;
-                return;
-            }
-
-            // Render 3 data terbaru agar dashboard tetap rapi
-            container.innerHTML = history.slice(0, 3).map(item => {
-                const isDanger = item.result.severity === 'danger' || item.result.status === 'danger';
-                const color = isDanger ? '#EF4444' : (item.result.severity === 'warning' ? '#F59E0B' : '#10B981');
-                const title = item.result.food_name || item.result.rhythm || item.result.impression || "Medical Check";
-                
-                return `
-                    <div class="history-item" style="display: flex; align-items: center; justify-content: space-between; padding: 1.2rem; border-bottom: 1px solid rgba(0,0,0,0.05); animation: fadeIn 0.5s ease;">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <div style="background: ${color}15; color: ${color}; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-size: 1.2rem;">
-                                <i class="fa-solid ${item.type === 'food' ? 'fa-utensils' : 'fa-heart-pulse'}"></i>
-                            </div>
-                            <div>
-                                <div style="font-size: 0.7rem; font-weight: 800; color: #94A3B8; text-transform: uppercase;">${item.type}</div>
-                                <div style="font-weight: 700; color: #1E293B;">${title}</div>
-                                <div style="font-size: 0.75rem; color: #64748B;">${item.date}</div>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <span style="background: ${color}10; color: ${color}; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; border: 1px solid ${color}30;">
-                                ${(item.result.severity || item.result.status || 'NORMAL').toUpperCase()}
-                            </span>
-                        </div>
-                    </div>`;
-            }).join('');
-        }
-
-        // Jalankan saat dashboard selesai dimuat
-        window.onload = renderDashboard;
-    </script>
 </body>
 </html>
