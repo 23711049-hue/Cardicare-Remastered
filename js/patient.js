@@ -153,3 +153,87 @@ function checkInteraction() {
         `;
     }
 }
+/* =========================================
+   MEDSHIELD CHAT CONTROLLER
+   ========================================= */
+
+// Kirim pesan kalau tekan Enter
+function handleEnter(e) {
+    if (e.key === 'Enter') sendDrugConsultation();
+}
+
+async function sendDrugConsultation() {
+    const inputField = document.getElementById('drugInput');
+    const chatContainer = document.getElementById('chat-container');
+    const userText = inputField.value.trim();
+
+    if (!userText) return;
+
+    // 1. Tampilkan Pesan User
+    appendMessage(userText, 'user');
+    inputField.value = ''; // Kosongkan input
+    
+    // 2. Tampilkan Loading Bubble
+    const loadingId = appendLoading();
+    scrollToBottom();
+
+    try {
+        // 3. Panggil Gemini Apoteker
+        // Pastikan askGeminiChat sudah ada di js/gemini.js
+        const reply = await askGeminiChat(userText);
+        
+        // 4. Ganti Loading dengan Jawaban AI
+        removeMessage(loadingId);
+        appendMessage(reply, 'bot');
+
+    } catch (error) {
+        removeMessage(loadingId);
+        appendMessage("Maaf, koneksi terganggu. Silakan coba lagi.", 'bot');
+    }
+    
+    scrollToBottom();
+}
+
+// Helper: Tambah Bubble Chat
+function appendMessage(text, sender) {
+    const chatContainer = document.getElementById('chat-container');
+    const div = document.createElement('div');
+    div.className = `message ${sender}-message animate-fade`;
+    
+    // Icon Avatar
+    const icon = sender === 'bot' ? '<i class="fa-solid fa-robot"></i>' : '<i class="fa-solid fa-user"></i>';
+    
+    div.innerHTML = `
+        <div class="msg-avatar">${icon}</div>
+        <div class="msg-content">${text}</div>
+    `;
+    
+    chatContainer.appendChild(div);
+}
+
+// Helper: Bubble Loading Animasi
+function appendLoading() {
+    const chatContainer = document.getElementById('chat-container');
+    const id = 'loading-' + Date.now();
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'message bot-message';
+    div.innerHTML = `
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-content">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Sedang mengecek interaksi obat...
+        </div>
+    `;
+    chatContainer.appendChild(div);
+    return id;
+}
+
+function removeMessage(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+function scrollToBottom() {
+    const chatContainer = document.getElementById('chat-container');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
