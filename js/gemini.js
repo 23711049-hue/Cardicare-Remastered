@@ -139,3 +139,51 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
         return await getDummyData();
     }
 }
+/**
+ * 🆕 FUNGSI CHATBOT APOTEKER (TEXT ONLY)
+ * Khusus untuk fitur MedShield
+ */
+async function askGeminiChat(userMessage) {
+    if (!API_KEY) throw new Error("API Key Missing");
+
+    // Prompt Spesifik Apoteker
+    const pharmacistPrompt = `
+    You are MedShield, an expert Clinical Pharmacist.
+    User will give you a list of medications.
+    
+    YOUR TASKS:
+    1. INTERACTION CHECK: Are there any dangerous combinations?
+    2. TIMING: When is the best time to take them? (Morning/Night, Before/After meal).
+    3. FOOD WARNINGS: What food/drink to avoid? (e.g., Grapefruit, Milk).
+
+    RULES:
+    - DO NOT prescribe dosage (say "Follow doctor's prescription").
+    - Use friendly, empathetic language (Indonesian).
+    - Format output using HTML tags for readability:
+      - Use <b> for medicine names.
+      - Use <br> for line breaks.
+      - Use <ul><li> for lists.
+    - If the input is not about medicine, politely refuse.
+
+    User Input: "${userMessage}"
+    `;
+
+    const requestBody = {
+        contents: [{ parts: [{ text: pharmacistPrompt }] }]
+    };
+
+    try {
+        const response = await fetch(`${BASE_URL}?key=${API_KEY}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+
+    } catch (error) {
+        console.error("Chat Error:", error);
+        return "Maaf, sistem sedang sibuk. Coba lagi nanti.";
+    }
+}
