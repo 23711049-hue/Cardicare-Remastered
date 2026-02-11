@@ -38,30 +38,35 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
 
     // --- 2. KONFIGURASI PROMPT (SYSTEM INSTRUCTIONS) ---
     
-    // A. PROMPT EKG (JANTUNG)
+   // A. PROMPT EKG (JANTUNG) - VERSI LENGKAP (FIX ERROR 'pr' undefined)
     if (promptType === 'ekg') {
         systemInstruction = `
         You are a Senior Cardiologist. Perform a systematic diagnostic interpretation of this EKG image.
         
         DIAGNOSTIC PROTOCOL:
-        1. RHYTHM: Check P-waves. Is it Sinus? Is it Atrial Fibrillation? Flutter? SVT?
-        2. RATE: Calculate Heart Rate. Tachycardia (>100)? Bradycardia (<60)?
-        3. CONDUCTION: Check intervals. PR prolonged (AV Block)? QRS wide (Bundle Branch Block)?
-        4. AXIS/HYPERTROPHY: Check for LVH or RVH criteria.
-        5. ISCHEMIA/INFARCTION: Look for ST Elevation, Depression, or T-Wave inversions.
+        1. RHYTHM: Check P-waves. Is it Sinus? Atrial Fibrillation? SVT?
+        2. RATE: Calculate Heart Rate.
+        3. INTERVALS: Estimate PR, QRS, and QT intervals in ms.
+        4. AXIS: Determine the axis.
+        5. IMPRESSION: Clinical diagnosis.
 
         CRITICAL RULES:
-        - Do not hallucinate ST Elevation if the baseline is wandering.
-        - Only classify as "Normal" if Rhythm, Rate, Axis, and Morphology are all within normal limits.
+        - Do not hallucinate. If intervals are unclear, estimate based on visual grid.
+        - Use "Normal" ranges: PR (120-200ms), QRS (<120ms), QTc (<440ms).
 
-        Return ONLY a valid JSON object (no markdown) with this structure:
+        Return ONLY a valid JSON object (no markdown) with this EXACT structure:
         {
-          "rhythm": "Specific rhythm (e.g., Sinus Rhythm, Atrial Fibrillation)",
-          "rate": "Numeric value or range (e.g., 75 bpm)",
-          "axis": "Normal/Left/Right/Extreme",
-          "impression": "Concise clinical impression (e.g., Normal Sinus Rhythm, Anterior STEMI)",
+          "rhythm": "Specific rhythm (e.g., Sinus Rhythm)",
+          "rate": "Numeric value (e.g., 75 bpm)",
+          "intervals": {
+            "pr": "Value in ms (e.g., 160ms)",
+            "qrs": "Value in ms (e.g., 80ms)",
+            "qt": "Value in ms (e.g., 400ms)"
+          },
+          "axis": "Normal/Left/Right",
+          "impression": "Concise clinical impression",
           "severity": "normal" | "warning" | "danger",
-          "recommendation": "Actionable advice for the doctor (e.g., Routine follow-up, Immediate ER referral)"
+          "recommendation": "Actionable advice for the doctor"
         }`;
     } 
     
