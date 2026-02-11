@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardiCare | Deteksi Risiko Jantung</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #ef4444;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0;
+            background-image: radial-gradient(circle at center, rgba(59, 130, 246, 0.1), transparent 70%);
+        }
+
+        .wizard-container {
+            width: 100%; max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative; overflow: hidden;
+        }
+
+        /* HEADER & PROGRESS */
+        .wizard-header { text-align: center; margin-bottom: 2rem; }
+        .wizard-header h2 { margin: 0 0 10px 0; color: white; }
+        .progress-bar { height: 6px; background: #334155; border-radius: 3px; overflow: hidden; margin-top: 1rem; }
+        .progress-fill { height: 100%; background: var(--accent); width: 25%; transition: width 0.4s ease; }
+
+        /* FORM STEPS */
+        .form-step { display: none; animation: fadeIn 0.5s ease; }
+        .form-step.active { display: block; }
+        
+        .question-group { margin-bottom: 1.5rem; }
+        .question-label { display: block; font-size: 1.1rem; margin-bottom: 10px; color: #e2e8f0; }
+        
+        /* INPUT STYLES */
+        input[type="number"], select {
+            width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569;
+            color: white; border-radius: 8px; outline: none; font-size: 1rem;
+        }
+        
+        /* RADIO BUTTON CUSTOM */
+        .radio-group { display: flex; gap: 10px; }
+        .radio-option {
+            flex: 1; cursor: pointer;
+        }
+        .radio-option input { display: none; }
+        .radio-box {
+            display: block; text-align: center; padding: 12px;
+            background: #0f172a; border: 1px solid #475569; border-radius: 8px;
+            transition: 0.3s; color: #94a3b8;
+        }
+        .radio-option input:checked + .radio-box {
+            background: rgba(59, 130, 246, 0.2); border-color: var(--accent); color: white; font-weight: bold;
+        }
+
+        /* TOMBOL NAVIGASI */
+        .btn-group { display: flex; justify-content: space-between; margin-top: 2rem; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-prev { background: transparent; color: #94a3b8; border: 1px solid #475569; }
+        .btn-prev:hover { background: #334155; color: white; }
+        .btn-next { background: var(--accent); color: white; }
+        .btn-next:hover { background: #2563eb; transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* HASIL ANALISA */
+        .result-container { text-align: center; padding: 2rem 0; display: none; }
+        .result-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .result-danger { color: var(--primary); }
+        .result-warning { color: var(--warning); }
+        .result-safe { color: var(--success); }
+        
+        .recommendation-box {
+            background: rgba(255,255,255,0.05); padding: 1.5rem; text-align: left;
+            border-radius: 10px; margin-top: 2rem; font-size: 0.95rem; line-height: 1.6;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Sub-Question Hidden */
+        .sub-question { display: none; margin-left: 20px; border-left: 2px solid #334155; padding-left: 15px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="wizard-container">
+        
+        <div class="wizard-header">
+            <h2><i class="fa-solid fa-user-doctor"></i> Skrining Jantung</h2>
+            <p style="color:#94a3b8; margin:0;">Langkah <span id="currentStepNum">1</span> dari 4</p>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <form id="screeningForm" onsubmit="return false;">
+            
+            <div class="form-step active" data-step="1">
+                <div class="question-group">
+                    <label class="question-label">Berapa usia Anda?</label>
+                    <input type="number" id="age" placeholder="Contoh: 45">
+                </div>
+                <div class="question-group">
+                    <label class="question-label">Jenis Kelamin</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="gender" value="male" checked><span class="radio-box">Pria</span></label>
+                        <label class="radio-option"><input type="radio" name="gender" value="female"><span class="radio-box">Wanita</span></label>
+                    </div>
+                </div>
+                <div class="question-group">
+                    <label class="question-label">Apakah Anda merokok?</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="smoker" value="yes"><span class="radio-box">Ya</span></label>
+                        <label class="radio-option"><input type="radio" name="smoker" value="no" checked><span class="radio-box">Tidak</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step" data-step="2">
+                <div class="question-group">
+                    <label class="question-label">Apakah Anda memiliki riwayat Darah Tinggi / Diabetes?</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="comorbid" value="yes"><span class="radio-box">Ya</span></label>
+                        <label class="radio-option"><input type="radio" name="comorbid" value="no" checked><span class="radio-box">Tidak</span></label>
+                    </div>
+                </div>
+                <div class="question-group">
+                    <label class="question-label">Pernahkah Anda pingsan mendadak tanpa sebab jelas?</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="syncope" value="yes"><span class="radio-box">Ya, Pernah</span></label>
+                        <label class="radio-option"><input type="radio" name="syncope" value="no" checked><span class="radio-box">Tidak Pernah</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step" data-step="3">
+                <div class="question-group">
+                    <label class="question-label">Apakah Anda sering merasakan nyeri dada / dada terasa berat?</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="chest_pain" value="yes" onclick="toggleSubQuestion('pain_detail', true)"><span class="radio-box">Ya</span></label>
+                        <label class="radio-option"><input type="radio" name="chest_pain" value="no" checked onclick="toggleSubQuestion('pain_detail', false)"><span class="radio-box">Tidak</span></label>
+                    </div>
+                </div>
+                
+                <div id="pain_detail" class="sub-question">
+                    <div class="question-group">
+                        <label class="question-label" style="font-size:0.95rem; color:#60A5FA;">Apakah nyerinya menjalar ke leher, rahang, atau lengan kiri?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="pain_radiating" value="yes"><span class="radio-box">Ya</span></label>
+                            <label class="radio-option"><input type="radio" name="pain_radiating" value="no" checked><span class="radio-box">Tidak</span></label>
+                        </div>
+                    </div>
+                    <div class="question-group">
+                        <label class="question-label" style="font-size:0.95rem; color:#60A5FA;">Kapan nyeri muncul?</label>
+                        <select id="pain_trigger" style="margin-top:5px;">
+                            <option value="exertion">Saat aktivitas berat (hilang saat istirahat)</option>
+                            <option value="rest">Saat istirahat (tiba-tiba)</option>
+                            <option value="stress">Saat stres / emosi</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step" data-step="4">
+                <div class="question-group">
+                    <label class="question-label">Apakah Anda mudah sesak napas?</label>
+                    <div class="radio-group">
+                        <label class="radio-option"><input type="radio" name="breath" value="yes" onclick="toggleSubQuestion('breath_detail', true)"><span class="radio-box">Ya</span></label>
+                        <label class="radio-option"><input type="radio" name="breath" value="no" checked onclick="toggleSubQuestion('breath_detail', false)"><span class="radio-box">Tidak</span></label>
+                    </div>
+                </div>
+
+                <div id="breath_detail" class="sub-question">
+                    <div class="question-group">
+                        <label class="question-label" style="font-size:0.95rem; color:#60A5FA;">Apakah sesak bertambah parah saat tidur telentang (perlu bantal tinggi)?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="orthopnea" value="yes"><span class="radio-box">Ya (Orthopnea)</span></label>
+                            <label class="radio-option"><input type="radio" name="orthopnea" value="no" checked><span class="radio-box">Tidak</span></label>
+                        </div>
+                    </div>
+                    <div class="question-group">
+                        <label class="question-label" style="font-size:0.95rem; color:#60A5FA;">Apakah kedua kaki Anda bengkak?</label>
+                        <div class="radio-group">
+                            <label class="radio-option"><input type="radio" name="edema" value="yes"><span class="radio-box">Ya</span></label>
+                            <label class="radio-option"><input type="radio" name="edema" value="no" checked><span class="radio-box">Tidak</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultContainer" class="result-container">
+                <div class="loading-state">
+                    <i class="fa-solid fa-heart-pulse fa-beat" style="font-size:3rem; color:#ef4444;"></i>
+                    <p>Menganalisis Data Klinis...</p>
+                </div>
+                </div>
+
+            <div class="btn-group" id="navBtns">
+                <button type="button" class="btn btn-prev" id="prevBtn" onclick="changeStep(-1)" disabled>Kembali</button>
+                <button type="button" class="btn btn-next" id="nextBtn" onclick="changeStep(1)">Lanjut</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="js/screening.js"></script>
+
+</body>
+</html>
