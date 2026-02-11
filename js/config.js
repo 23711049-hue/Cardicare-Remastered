@@ -8,8 +8,9 @@ const CONFIG = {
     API_KEY: "AIzaSyASHOwJFjqPW60Vz8whv6wxiOZCB3opmjc",
     
     // Model Version (Bisa diganti kalau mau upgrade)
-    MODEL_NAME: "gemini-2.5-flash-lite"
+    MODEL_NAME: "gemini-2.5-flash"
 };
 
 // Mencegah perubahan tak sengaja pada konfigurasi
 Object.freeze(CONFIG);
+
