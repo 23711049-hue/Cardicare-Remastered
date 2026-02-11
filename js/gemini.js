@@ -1,36 +1,33 @@
 /* ============================================================
    CARDICARE INTELLIGENCE ENGINE (SECURE MODULE)
-   Connects to Google Gemini 2.5 Flash Lite
+   Connects to Google Gemini Vision API
    ============================================================ */
 
 /**
- * MENGAMBIL API KEY DENGAN AMAN
- * Logika: Cek apakah variabel global CONFIG tersedia (dari config.js).
- * Jika tidak ada, tampilkan error agar developer sadar.
+ * 1. MENGAMBIL API KEY & MODEL DENGAN AMAN
+ * Mengambil konfigurasi dari js/config.js
  */
 const API_KEY = (() => {
     if (typeof CONFIG !== 'undefined' && CONFIG.API_KEY) {
         return CONFIG.API_KEY;
     } else {
-        console.error("❌ CRITICAL ERROR: API Key tidak ditemukan! Pastikan file js/config.js sudah dimuat dan berisi API_KEY yang valid.");
-        return null; // Mengembalikan null agar sistem tidak crash total, tapi bisa di-handle di bawah
+        console.error("❌ CRITICAL: API Key Missing in js/config.js");
+        return null;
     }
 })();
 
-// Menggunakan Gemini 2.5 Flash Lite
-const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
+// Mengambil Model dari Config (Default ke 2.0 Flash jika tidak ada setting)
+const MODEL_NAME = (typeof CONFIG !== 'undefined' && CONFIG.MODEL_NAME) ? CONFIG.MODEL_NAME : "gemini-2.0-flash";
+const BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
 
 /**
  * Fungsi Utama: Mengirim gambar ke Gemini Vision
- * @param {string} base64Image - String gambar dalam format base64
- * @param {string} promptType - Jenis prompt ('ekg', 'food', 'cxr', 'drug')
- * @param {string} mimeType - Tipe file gambar (default: image/jpeg)
  */
 async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg") {
     
-    // 1. Validasi Keamanan (Guard Clause)
+    // Guard Clause: Cek Key
     if (!API_KEY) {
-        alert("⚠️ Konfigurasi Error: API Key belum dipasang. Silakan cek console browser.");
+        alert("⚠️ System Error: API Key not configured.");
         throw new Error("API Key Missing");
     }
 
@@ -38,35 +35,37 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
 
     // --- 2. KONFIGURASI PROMPT (SYSTEM INSTRUCTIONS) ---
     
-   // A. PROMPT EKG (JANTUNG) - VERSI LENGKAP (FIX ERROR 'pr' undefined)
+    // A. PROMPT EKG (JANTUNG) - MODE DETEKTIF (SANGAT SENSITIF)
     if (promptType === 'ekg') {
         systemInstruction = `
-        You are a Senior Cardiologist. Perform a systematic diagnostic interpretation of this EKG image.
-        
-        DIAGNOSTIC PROTOCOL:
-        1. RHYTHM: Check P-waves. Is it Sinus? Atrial Fibrillation? SVT?
-        2. RATE: Calculate Heart Rate.
-        3. INTERVALS: Estimate PR, QRS, and QT intervals in ms.
-        4. AXIS: Determine the axis.
-        5. IMPRESSION: Clinical diagnosis.
+        ACT AS A SENIOR CARDIOLOGIST SPECIALIZING IN ARRHYTHMIA AND ISCHEMIA.
+        YOUR TASK IS TO DETECT PATHOLOGY. DO NOT DEFAULT TO "NORMAL" UNLESS THE TRACING IS PRISTINE.
 
-        CRITICAL RULES:
-        - Do not hallucinate. If intervals are unclear, estimate based on visual grid.
-        - Use "Normal" ranges: PR (120-200ms), QRS (<120ms), QTc (<440ms).
+        Analyze the EKG image pixel-by-pixel for:
+        1. RHYTHM: Is it TRULY Sinus? Look for Irregularly Irregular (Afib), Sawtooth (Flutter), or absence of P-waves (SVT/Junctional).
+        2. ISCHEMIA: Scrutinize ST segments. Even 1mm elevation/depression is significant. Look at V1-V6, II, III, aVF.
+        3. CONDUCTION: Is QRS wide (>120ms)? Is PR prolonged (>200ms)? Look for Bundle Branch Blocks.
 
-        Return ONLY a valid JSON object (no markdown) with this EXACT structure:
+        STRICT DIAGNOSTIC RULES:
+        - If R-R intervals are variable -> Diagnose "Atrial Fibrillation".
+        - If P-waves are absent/inverted -> Diagnose "Junctional Rhythm" or "SVT".
+        - If ST Elevation present -> Diagnose "STEMI" (specify location).
+        - If ST Depression present -> Diagnose "Ischemia".
+        - Only if ALL criteria are strictly normal, diagnose "Sinus Rhythm".
+
+        Return ONLY a valid JSON object with this EXACT structure:
         {
-          "rhythm": "Specific rhythm (e.g., Sinus Rhythm)",
-          "rate": "Numeric value (e.g., 75 bpm)",
+          "rhythm": "Precise Rhythm Name (e.g., Atrial Fibrillation, Sinus Tachycardia)",
+          "rate": "Numeric value (e.g., 115 bpm)",
           "intervals": {
-            "pr": "Value in ms (e.g., 160ms)",
-            "qrs": "Value in ms (e.g., 80ms)",
-            "qt": "Value in ms (e.g., 400ms)"
+            "pr": "Value in ms (e.g., 160ms or -)",
+            "qrs": "Value in ms (e.g., 90ms)",
+            "qt": "Value in ms (e.g., 380ms)"
           },
-          "axis": "Normal/Left/Right",
-          "impression": "Concise clinical impression",
+          "axis": "Normal/Left/Right/Extreme",
+          "impression": "Detailed clinical conclusion (e.g., Atrial Fibrillation with Rapid Ventricular Response)",
           "severity": "normal" | "warning" | "danger",
-          "recommendation": "Actionable advice for the doctor"
+          "recommendation": "Specific actionable medical advice (e.g., Administer Beta-Blockers, Immediate Cardioversion)"
         }`;
     } 
     
@@ -74,21 +73,18 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
     else if (promptType === 'food') {
         systemInstruction = `
         You are a Clinical Nutritionist for heart failure patients. Analyze this food image.
+        Identify the main dish and estimate 1) Calories (kcal) and 2) Sodium (mg).
         
-        Identify the main dish and estimate:
-        1. Total Calories (kcal)
-        2. Sodium Content (mg) - THIS IS CRITICAL.
-        
-        Risk Assessment Rules (based on typical Heart Failure diet of <2000mg Sodium/day):
-        - SAFE: <400mg Sodium per serving.
-        - MODERATE: 400-800mg Sodium per serving.
-        - DANGEROUS: >800mg Sodium per serving.
+        Risk Rules (<2000mg Sodium/day):
+        - SAFE: <400mg Sodium/serving.
+        - MODERATE: 400-800mg Sodium/serving.
+        - DANGEROUS: >800mg Sodium/serving.
 
-        Return ONLY a valid JSON object (no markdown) with this structure:
+        Return valid JSON:
         {
           "food_name": "Name of the dish",
-          "calories": "Estimated kcal (e.g., 500 kcal)",
-          "sodium": "Estimated sodium in mg (e.g., 600 mg)",
+          "calories": "Estimated kcal",
+          "sodium": "Estimated sodium in mg",
           "status": "safe" | "moderate" | "danger",
           "advice": "Short nutritional advice. Warn strictly if high sodium."
         }`;
@@ -97,14 +93,14 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
     // C. PROMPT OBAT (INTERAKSI)
     else if (promptType === 'drug') {
         systemInstruction = `
-        You are a Clinical Pharmacist. Identify the medication in the image (pill/packaging).
-        Check for potential adverse effects or interactions common in heart patients (e.g., with blood thinners, beta-blockers).
+        You are a Clinical Pharmacist. Identify the medication (pill/box).
+        Check for interactions with heart meds (Blood thinners, Beta-blockers).
 
-        Return ONLY a valid JSON object (no markdown) with this structure:
+        Return valid JSON:
         {
-          "drug_name": "Name of the drug identified",
-          "function": "Primary use (e.g., Pain relief, Hypertension)",
-          "safety_alert": "Any warnings for heart patients?",
+          "drug_name": "Name of the drug",
+          "function": "Primary use",
+          "safety_alert": "Warnings for heart patients",
           "status": "safe" | "warning" | "danger"
         }`;
     }
@@ -112,19 +108,14 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
     // D. PROMPT RONTGEN (CXR)
     else if (promptType === 'cxr') {
         systemInstruction = `
-        You are a Radiologist. Analyze this Chest X-Ray (CXR) specifically for signs of Heart Failure.
-        
-        Look for:
-        1. Cardiomegaly (CTR > 50%)
-        2. Pulmonary Edema / Congestion
-        3. Pleural Effusion (Blunted costophrenic angles)
-        4. Kerley B Lines
+        You are a Radiologist. Analyze this Chest X-Ray (CXR) for Heart Failure signs.
+        Check: Cardiomegaly (CTR>50%), Pleural Effusion, Pulmonary Edema.
 
-        Return ONLY a valid JSON object (no markdown) with this structure:
+        Return valid JSON:
         {
-          "finding": "Key radiological findings",
-          "ctr_ratio": "Estimated Cardiothoracic Ratio (e.g., ~55%)",
-          "impression": "Radiological diagnosis (e.g., Cardiomegaly with mild congestion)",
+          "finding": "Key radiological findings summary",
+          "ctr_ratio": "Estimated CTR (e.g., 55%)",
+          "impression": "Diagnosis (e.g., Cardiomegaly with mild congestion)",
           "severity": "normal" | "warning" | "danger"
         }`;
     }
@@ -141,6 +132,8 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
 
     // --- 4. EKSEKUSI API CALL ---
     try {
+        console.log(`📡 Sending request to Gemini (${MODEL_NAME})...`);
+        
         const response = await fetch(`${BASE_URL}?key=${API_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -155,9 +148,10 @@ async function askGeminiVision(base64Image, promptType, mimeType = "image/jpeg")
         const data = await response.json();
         const textResult = data.candidates[0].content.parts[0].text;
         
-        // Membersihkan format Markdown (jika Gemini bandel ngasih ```json)
+        // Membersihkan format Markdown
         const cleanJson = textResult.replace(/```json|```/g, '').trim();
         
+        console.log("✅ Gemini Response Received");
         return JSON.parse(cleanJson);
 
     } catch (error) {
