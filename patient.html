@@ -6,144 +6,103 @@
     <title>CardiCare | Patient Portal</title>
     
     <link rel="stylesheet" href="css/style.css">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         /* --- GLOBAL --- */
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0f172a;
-            color: white;
-            margin: 0;
-        }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; margin: 0; }
         .app-container { display: flex; height: 100vh; width: 100%; overflow: hidden; }
 
-        /* --- SIDEBAR (Solid & High Contrast) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
-            width: 260px;
-            min-width: 260px;
-            background-color: #1e293b !important; /* Solid Biru Gelap */
-            padding: 1.5rem;
-            padding-top: 1rem; /* Jarak atas rapat */
+            width: 260px; min-width: 260px;
+            background-color: #1e293b !important;
+            padding: 1.5rem; padding-top: 1rem;
             display: flex; flex-direction: column; justify-content: flex-start;
             border-right: 1px solid rgba(255,255,255,0.1);
-            height: 100vh;
-            z-index: 100;
-            box-sizing: border-box;
+            height: 100vh; z-index: 100; box-sizing: border-box;
         }
-
-        /* Logo Area */
-        .logo-area { 
-            margin-bottom: 1.5rem; 
-            margin-top: 0.5rem;
-        }
-        .logo-area h1 {
-            font-size: 1.4rem; margin: 0;
-            color: #ffffff !important;
-            font-weight: 800;
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        /* Menu Items */
+        .logo-area { margin-bottom: 1.5rem; margin-top: 0.5rem; }
+        .logo-area h1 { font-size: 1.4rem; margin: 0; color: #ffffff !important; font-weight: 800; display: flex; align-items: center; gap: 10px; }
         .nav-menu { display: flex; flex-direction: column; gap: 5px; }
-        
         .nav-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 15px;
-            color: #e2e8f0 !important; /* Putih Terang */
-            text-decoration: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.2s;
+            display: flex; align-items: center; gap: 12px; padding: 10px 15px;
+            color: #e2e8f0 !important; text-decoration: none; border-radius: 10px;
+            cursor: pointer; font-size: 0.95rem; transition: background 0.2s;
         }
         .nav-item:hover { background-color: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
         .nav-item.active { background-color: #10B981 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+        /* Khusus tombol emergency aktif warnanya merah */
+        .nav-item#nav-emergency.active { background-color: #ef4444 !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
+        .separator { margin: 1rem 0 0.5rem 10px; font-size: 0.7rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px; }
 
-        .separator { 
-            margin: 1rem 0 0.5rem 10px; 
-            font-size: 0.7rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px;
-        }
-
-        /* --- CONTENT AREA --- */
-        .main-content {
-            flex: 1; padding: 2rem; overflow-y: auto; position: relative;
-            background: radial-gradient(circle at top right, rgba(16,185,129,0.1), transparent 40%);
-        }
-        
+        /* --- CONTENT --- */
+        .main-content { flex: 1; padding: 2rem; overflow-y: auto; position: relative; background: radial-gradient(circle at top right, rgba(16,185,129,0.1), transparent 40%); }
         .user-greeting h2 { font-size: 1.5rem; margin: 0; }
         .user-greeting p { color: #94a3b8; margin-top: 5px; font-size: 0.9rem; }
 
-        /* --- MOBILE RESPONSIVE --- */
-        .mobile-menu-btn {
-            display: none; position: fixed; top: 15px; left: 15px; z-index: 2000;
-            background: #10B981; color: white; border: none;
-            width: 45px; height: 45px; border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center;
-        }
-
-        .sidebar-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(5px);
-        }
+        /* --- MOBILE --- */
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 2000; background: #10B981; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(5px); }
 
         @media (max-width: 768px) {
             .mobile-menu-btn { display: flex; }
-            .sidebar {
-                position: fixed; top: 0; left: -100%;
-                height: 100vh; width: 260px;
-                transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 5px 0 25px rgba(0,0,0,0.9);
-                padding-top: 2rem;
-            }
+            .sidebar { position: fixed; top: 0; left: -100%; height: 100vh; width: 260px; transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.9); padding-top: 2rem; }
             .sidebar.active { left: 0; }
             .sidebar-overlay.active { display: block; }
             .main-content { padding-top: 80px; padding-left: 1.5rem; padding-right: 1.5rem; }
-            
-            /* Responsive Nutri Layout */
             .scanner-layout { grid-template-columns: 1fr !important; }
         }
 
         /* --- MODULE STYLES --- */
         .module-section { display: none; animation: fadeIn 0.5s ease; margin-top: 2rem; }
-        .active-module { display: block; } /* Pengganti class hidden/block */
-
+        .active-module { display: block; }
+        
         /* Nutri Guard */
         .scanner-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem; }
         .glass-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; }
-        .upload-zone { 
-            text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; transition: 0.3s; 
-            min-height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column; 
-            background: rgba(255,255,255,0.02);
-        }
+        .upload-zone { text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; transition: 0.3s; min-height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column; background: rgba(255,255,255,0.02); }
         .upload-zone:hover { border-color: #10B981; background: rgba(16, 185, 129, 0.05); }
 
         /* Chat Interface */
-        .chat-interface {
-            display: flex; flex-direction: column;
-            height: 550px; background: rgba(30, 41, 59, 0.5); border-radius: 16px; overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 1rem;
-        }
+        .chat-interface { display: flex; flex-direction: column; height: 550px; background: rgba(30, 41, 59, 0.5); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 1rem; }
         .chat-container { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-        
         .message { display: flex; align-items: flex-start; gap: 10px; max-width: 85%; }
         .message.bot-message { align-self: flex-start; }
         .message.user-message { align-self: flex-end; flex-direction: row-reverse; }
-        
         .msg-avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.9rem; }
         .bot-message .msg-avatar { background: #10B981; color: white; }
         .user-message .msg-avatar { background: #60A5FA; color: white; }
-        
         .msg-content { padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; }
         .bot-message .msg-content { background: rgba(255,255,255,0.1); color: #e2e8f0; border-top-left-radius: 2px; }
         .user-message .msg-content { background: #2563EB; color: white; border-top-right-radius: 2px; }
-        
         .input-area { padding: 1rem; background: rgba(15, 23, 42, 0.6); display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
         .input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 30px; color: white; outline: none; }
         .send-btn { width: 45px; height: 45px; border-radius: 50%; border: none; background: #10B981; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
+        /* --- EMERGENCY TAB STYLES (NEW) --- */
+        .emergency-header { background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(30, 41, 59, 0.9)); border: 1px solid #ef4444; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; text-align: center; position: relative; overflow: hidden; }
+        .pulse-ring { position: absolute; width: 200px; height: 200px; border-radius: 50%; background: rgba(239, 68, 68, 0.2); top: 50%; left: 50%; transform: translate(-50%, -50%); animation: pulse 2s infinite; z-index: 0; }
+        .emergency-content { position: relative; z-index: 1; }
+        
+        .hospital-list { display: flex; flex-direction: column; gap: 1rem; }
+        .hospital-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .hospital-card:hover { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+        .hospital-info h4 { margin: 0 0 5px 0; font-size: 1.1rem; color: white; }
+        .hospital-info p { margin: 0; font-size: 0.9rem; color: #94a3b8; }
+        .badges { display: flex; gap: 8px; margin-top: 8px; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-cath { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+        .badge-bpjs { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; }
+        
+        .distance-box { text-align: right; }
+        .dist-val { font-size: 1.2rem; font-weight: 800; color: #ef4444; }
+        .dist-time { font-size: 0.8rem; color: #cbd5e1; display: block; }
+        .btn-nav { margin-top: 8px; background: white; color: #0f172a; border: none; padding: 6px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
+        .btn-nav:hover { background: #e2e8f0; }
+
+        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.7; } 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -166,7 +125,7 @@
                     <i class="fa-solid fa-house"></i> Dashboard
                 </a>
                 
-                <div class="separator">MODULES</div>
+                <div class="separator">PERSONAL HEALTH</div>
                 
                 <a class="nav-item active" id="nav-nutri" onclick="switchTab('nutri')">
                     <i class="fa-solid fa-apple-whole"></i> Nutri-Guard
@@ -174,6 +133,11 @@
                 
                 <a class="nav-item" id="nav-meds" onclick="switchTab('meds')">
                     <i class="fa-solid fa-user-doctor"></i> Med-Shield Chat
+                </a>
+                
+                <div class="separator" style="color:#ef4444;">URGENT</div>
+                <a class="nav-item" id="nav-emergency" onclick="switchTab('emergency')">
+                    <i class="fa-solid fa-truck-medical" style="color:#ef4444;"></i> Emergency RS
                 </a>
             </div>
         </nav>
@@ -194,19 +158,16 @@
                 <div class="scanner-layout">
                     <div class="glass-card upload-zone" onclick="document.getElementById('foodInput').click()">
                         <input type="file" id="foodInput" accept="image/*" hidden onchange="handleFoodUpload(this)">
-                        
                         <div class="upload-content">
                             <div style="font-size: 3rem; color: #64748b; margin-bottom: 1rem;"><i class="fa-solid fa-camera"></i></div>
                             <h3>Scan Makanan</h3>
                             <p style="color:#94a3b8; font-size:0.9rem;">Upload foto untuk analisa nutrisi</p>
                         </div>
-                        
                         <div id="scanPreview" style="display:none; width:100%; text-align:center;">
                             <img id="previewImg" src="" style="max-width:100%; max-height:250px; border-radius:10px;">
                             <p class="scanning-text" style="color:#10B981; margin-top:10px;"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing...</p>
                         </div>
                     </div>
-
                     <div class="glass-card result-zone" id="nutriResult">
                         <div style="text-align:center; color:#64748b; padding-top:4rem;">
                             <i class="fa-solid fa-utensils" style="font-size:3rem; margin-bottom:1rem;"></i>
@@ -221,23 +182,42 @@
                     <h3 style="margin:0; font-size:1.2rem;"><i class="fa-solid fa-user-doctor" style="color:#60A5FA;"></i> MedShield Pharmacist</h3>
                     <p style="color: #94a3b8; font-size: 0.9rem;">Konsultasi keamanan dan interaksi obat instan.</p>
                 </div>
-
                 <div class="chat-interface">
                     <div id="chat-container" class="chat-container">
                         <div class="message bot-message">
                             <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
-                            <div class="msg-content">
-                                Halo! Saya Apoteker AI Anda. 💊<br>
-                                Obat apa yang sedang Anda minum? Saya akan cek keamanannya untuk jantung.
-                            </div>
+                            <div class="msg-content">Halo! Obat apa yang ingin Anda cek keamanannya hari ini? 💊</div>
                         </div>
                     </div>
-
                     <div class="input-area">
                         <input type="text" id="drugInput" placeholder="Ketik nama obat..." onkeypress="handleEnter(event)">
                         <button onclick="sendDrugConsultation()" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
+            </section>
+
+            <section id="emergency-tab" class="module-section">
+                
+                <div class="emergency-header">
+                    <div class="pulse-ring"></div>
+                    <div class="emergency-content">
+                        <h2 style="color:#ef4444; margin:0;"><i class="fa-solid fa-triangle-exclamation"></i> CATH LAB LOCATOR</h2>
+                        <p style="color:#cbd5e1; margin-top:5px;">Mendeteksi Rumah Sakit dengan Fasilitas PCI (Ring Jantung) Terdekat</p>
+                        <button onclick="findNearestHospital()" style="background:#ef4444; color:white; border:none; padding:10px 20px; border-radius:30px; font-weight:bold; margin-top:1rem; cursor:pointer;">
+                            <i class="fa-solid fa-location-crosshairs"></i> Refresh Lokasi Saya
+                        </button>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom:1rem; color:#94a3b8;">Rekomendasi RS (Berdasarkan GPS)</h4>
+                
+                <div id="hospital-list" class="hospital-list">
+                    <div style="text-align:center; padding:2rem; color:#64748b;">
+                        <i class="fa-solid fa-satellite-dish fa-spin" style="font-size:2rem; margin-bottom:1rem;"></i>
+                        <p>Mencari RS dengan fasilitas Cath Lab...</p>
+                    </div>
+                </div>
+
             </section>
 
         </main>
@@ -247,54 +227,92 @@
     <script src="js/gemini.js"></script>
     
     <script>
-        // --- MOBILE SIDEBAR TOGGLE ---
+        // --- MOBILE SIDEBAR ---
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
             document.getElementById('sidebarOverlay').classList.toggle('active');
         }
 
-        // --- 1. LOGIKA PINDAH TAB ---
+        // --- TAB SWITCHER ---
         function switchTab(tabName) {
-            // Reset active class di nav
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            // Sembunyikan semua modul
             document.querySelectorAll('.module-section').forEach(el => el.classList.remove('active-module'));
 
-            // Aktifkan yang dipilih
             document.getElementById(tabName + '-tab').classList.add('active-module');
             document.getElementById('nav-' + tabName).classList.add('active');
             
-            // Tutup sidebar di mobile
+            if(tabName === 'emergency') findNearestHospital(); // Auto scan saat buka tab emergency
             if(window.innerWidth < 768) toggleSidebar();
         }
 
-        // --- 2. LOGIKA CHATBOT ---
-        function handleEnter(e) { if (e.key === 'Enter') sendDrugConsultation(); }
+        // --- EMERGENCY LOGIC (CATH LAB LOCATOR) ---
+        function findNearestHospital() {
+            const list = document.getElementById('hospital-list');
+            list.innerHTML = `<div style="text-align:center; padding:2rem; color:#64748b;"><i class="fa-solid fa-satellite-dish fa-spin" style="font-size:2rem; margin-bottom:1rem;"></i><p>Mencari RS dengan fasilitas Cath Lab...</p></div>`;
 
+            // Simulasi Delay GPS
+            setTimeout(() => {
+                // DATA DUMMY RS (Bisa diganti Real Data nanti)
+                const hospitals = [
+                    { name: "RS Jantung Harapan Kita", type: "Pusat Jantung Nasional", dist: 2.4, time: 12, cath: true, bpjs: true },
+                    { name: "RSUD Dr. Moewardi", type: "RSUD Rujukan Utama", dist: 4.1, time: 18, cath: true, bpjs: true },
+                    { name: "RS Panti Waluyo", type: "RS Swasta", dist: 1.2, time: 5, cath: false, bpjs: true }, // Tidak punya Cath Lab
+                    { name: "RS Indriati", type: "RS Swasta Spesialis", dist: 8.5, time: 25, cath: true, bpjs: true }
+                ];
+
+                // Filter hanya yang punya Cath Lab (Prioritas Penanganan Jantung)
+                const recommended = hospitals.filter(h => h.cath).sort((a,b) => a.dist - b.dist);
+
+                let html = "";
+                recommended.forEach(h => {
+                    html += `
+                    <div class="hospital-card">
+                        <div class="hospital-info">
+                            <h4>${h.name} <i class="fa-solid fa-circle-check" style="color:#10b981; font-size:0.8rem;" title="Verified Cath Lab"></i></h4>
+                            <p>${h.type}</p>
+                            <div class="badges">
+                                <span class="badge badge-cath">CATH LAB AVAILABLE</span>
+                                ${h.bpjs ? '<span class="badge badge-bpjs">TERIMA BPJS</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="distance-box">
+                            <div class="dist-val">${h.dist} km</div>
+                            <span class="dist-time">~${h.time} mnt</span>
+                            <button class="btn-nav" onclick="window.open('https://www.google.com/maps/search/${h.name}', '_blank')">
+                                <i class="fa-solid fa-location-arrow"></i> NAVIGATE
+                            </button>
+                        </div>
+                    </div>`;
+                });
+                
+                // Tambahkan Warning untuk RS Non-Cath Lab
+                html += `<div style="margin-top:2rem; padding:1rem; border:1px dashed #64748b; border-radius:10px; color:#94a3b8; font-size:0.85rem; text-align:center;">
+                    <i class="fa-solid fa-circle-info"></i> RS lain mungkin lebih dekat, namun sistem memprioritaskan RS dengan fasilitas <b>Intervensi Koroner (PCI)</b> untuk penanganan serangan jantung.
+                </div>`;
+
+                list.innerHTML = html;
+            }, 1500);
+        }
+
+        // --- CHATBOT & NUTRI LOGIC (SAMA SEPERTI SEBELUMNYA) ---
+        function handleEnter(e) { if (e.key === 'Enter') sendDrugConsultation(); }
         async function sendDrugConsultation() {
             const input = document.getElementById('drugInput');
             const text = input.value.trim();
             if(!text) return;
-
             appendMessage(text, 'user');
             input.value = '';
-            
             const loadingId = appendLoading();
             scrollToBottom();
-
             try {
                 if(typeof askGeminiChat === 'function') {
                     const reply = await askGeminiChat(text);
                     removeMessage(loadingId);
                     appendMessage(reply, 'bot');
-                } else { throw new Error("API Chat Missing"); }
-            } catch (err) {
-                removeMessage(loadingId);
-                appendMessage("⚠️ Maaf, Apoteker AI offline.", 'bot');
-            }
+                } else { throw new Error("API Missing"); }
+            } catch (err) { removeMessage(loadingId); appendMessage("⚠️ Maaf, Apoteker AI offline.", 'bot'); }
             scrollToBottom();
         }
-
         function appendMessage(text, sender) {
             const container = document.getElementById('chat-container');
             const div = document.createElement('div');
@@ -302,7 +320,6 @@
             div.innerHTML = `<div class="msg-avatar"><i class="fa-solid ${sender==='bot'?'fa-robot':'fa-user'}"></i></div><div class="msg-content">${text}</div>`;
             container.appendChild(div);
         }
-
         function appendLoading() {
             const container = document.getElementById('chat-container');
             const id = 'load-' + Date.now();
@@ -311,11 +328,9 @@
             div.innerHTML = `<div class="msg-avatar"><i class="fa-solid fa-robot"></i></div><div class="msg-content"><i class="fa-solid fa-circle-notch fa-spin"></i> Mengecek...</div>`;
             container.appendChild(div); return id;
         }
-
         function removeMessage(id) { const el = document.getElementById(id); if(el) el.remove(); }
         function scrollToBottom() { const el = document.getElementById('chat-container'); el.scrollTop = el.scrollHeight; }
 
-        // --- 3. LOGIKA NUTRI GUARD ---
         function handleFoodUpload(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -323,20 +338,16 @@
                     document.querySelector('.upload-content').style.display = 'none';
                     document.getElementById('scanPreview').style.display = 'block';
                     document.getElementById('previewImg').src = e.target.result;
-
                     const base64 = e.target.result.split(',')[1];
                     try {
                         const res = await askGeminiVision(base64, 'food');
                         renderNutriResult(res);
                         document.querySelector('.scanning-text').innerHTML = '✅ SELESAI';
-                    } catch(e) {
-                        alert("Gagal scan makanan");
-                    }
+                    } catch(e) { alert("Gagal scan makanan"); }
                 };
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
         function renderNutriResult(data) {
             const box = document.getElementById('nutriResult');
             let color = data.status === 'danger' ? '#ef4444' : (data.status === 'moderate' ? '#f59e0b' : '#10b981');
