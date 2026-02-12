@@ -11,8 +11,49 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Tombol Menu Mobile */
+        .mobile-menu-btn {
+            display: none; /* Sembunyi di Desktop */
+            position: fixed; top: 15px; left: 15px; z-index: 2000;
+            background: #ef4444; color: white; border: none;
+            width: 45px; height: 45px; border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-size: 1.2rem; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .mobile-menu-btn:active { transform: scale(0.9); }
+
+        /* Overlay Gelap saat Sidebar Muncul */
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1001; backdrop-filter: blur(5px);
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+            
+            .sidebar {
+                position: fixed; top: 0; left: -100%; /* Sembunyi di kiri layar */
+                height: 100vh; width: 260px; z-index: 1002;
+                transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+            }
+            .sidebar.active { left: 0; } /* Muncul saat kelas active ada */
+            .sidebar-overlay.active { display: block; }
+            
+            /* Geser konten utama biar ga ketutupan tombol */
+            .main-content { padding-top: 80px; }
+        }
+    </style>
 </head>
 <body>
+
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
         <nav class="sidebar">
@@ -74,7 +115,6 @@
                     <button onclick="downloadPDF('ekg-report-area')" class="btn-pulse" style="background: #10B981; margin-top: 1rem; width: 100%;">
                         <i class="fa-solid fa-file-pdf"></i> Download Laporan EKG (PDF)
                     </button>
-                    
                 </div>
             </section>
 
@@ -109,7 +149,6 @@
                     <button onclick="downloadPDF('cxr-report-area')" class="btn-pulse" style="background: #10B981; margin-top: 1rem; width: 100%;">
                         <i class="fa-solid fa-file-pdf"></i> Download Laporan Rontgen (PDF)
                     </button>
-
                 </div>
             </section>
 
@@ -120,6 +159,13 @@
     <script src="js/gemini.js"></script>
     <script src="js/doctor.js"></script>
 
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+    </script>
+
     <div id="loading-overlay" class="loading-overlay d-none">
         <div class="heart-container">
             <i class="fa-solid fa-heart-pulse fa-bounce" style="color: #ef4444; font-size: 5rem;"></i>
@@ -127,6 +173,6 @@
         <h3 id="loading-text" style="margin-top: 1.5rem; color: #1e293b; font-weight: 800;">Menganalisis Data...</h3>
         <p style="color: #64748b;">AI sedang melakukan diagnosa klinis</p>
     </div>
-    
+
 </body>
 </html>
