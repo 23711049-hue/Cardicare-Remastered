@@ -21,7 +21,10 @@
             padding: 1.5rem; padding-top: 1rem;
             display: flex; flex-direction: column; justify-content: flex-start;
             border-right: 1px solid rgba(255,255,255,0.1);
-            height: 100vh; z-index: 100; box-sizing: border-box;
+            height: 100vh; 
+            z-index: 100; /* Agar di atas konten */
+            position: relative; /* WAJIB ADA agar z-index jalan di Desktop */
+            box-sizing: border-box;
         }
         .logo-area { margin-bottom: 1.5rem; margin-top: 0.5rem; }
         .logo-area h1 { font-size: 1.4rem; margin: 0; color: #ffffff !important; font-weight: 800; display: flex; align-items: center; gap: 10px; }
@@ -36,35 +39,34 @@
         .nav-item:hover { background-color: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
         .nav-item.active { background-color: #10B981 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
         
-        /* Special Colors for Specific Tabs */
+        /* Warna Khusus Menu */
         .nav-item#nav-face.active { background-color: #f59e0b !important; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
         .nav-item#nav-iot.active { background-color: #3b82f6 !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
         .nav-item#nav-emergency.active { background-color: #ef4444 !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
         
         .separator { margin: 1rem 0 0.5rem 10px; font-size: 0.7rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px; }
 
-        /* --- MAIN CONTENT --- */
-        .main-content { flex: 1; padding: 2rem; overflow-y: auto; position: relative; background: radial-gradient(circle at top right, rgba(16,185,129,0.1), transparent 40%); }
+        /* --- CONTENT --- */
+        .main-content { 
+            flex: 1; padding: 2rem; overflow-y: auto; position: relative; 
+            background: radial-gradient(circle at top right, rgba(16,185,129,0.1), transparent 40%); 
+            z-index: 1; /* Pastikan konten di bawah sidebar saat overlap */
+        }
         .user-greeting h2 { font-size: 1.5rem; margin: 0; }
         .user-greeting p { color: #94a3b8; margin-top: 5px; font-size: 0.9rem; }
 
         /* --- MODULES --- */
         .module-section { display: none; animation: fadeIn 0.5s ease; margin-top: 2rem; }
         .active-module { display: block; }
-        
-        /* Glass Card Utility */
         .glass-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; }
 
-        /* 1. NUTRI GUARD */
+        /* --- 1. NUTRI GUARD --- */
         .scanner-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem; }
         .upload-zone { text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; transition: 0.3s; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(255,255,255,0.02); }
         .upload-zone:hover { border-color: #10B981; background: rgba(16, 185, 129, 0.05); }
 
-        /* 2. FACE VITALS */
-        .camera-container {
-            width: 100%; max-width: 600px; margin: 0 auto; position: relative; 
-            border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #334155;
-        }
+        /* --- 2. FACE VITALS --- */
+        .camera-container { width: 100%; max-width: 600px; margin: 0 auto; position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #334155; }
         #webcam { width: 100%; transform: scaleX(-1); }
         .overlay-hud { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; display: flex; justify-content: center; align-items: center; }
         .face-guide { width: 250px; height: 300px; border: 2px dashed rgba(16,185,129,0.5); border-radius: 50% 50% 40% 40%; position: relative; }
@@ -73,13 +75,13 @@
         .metric-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 12px; text-align: center; }
         .metric-val { font-size: 2rem; font-weight: 800; display: block; margin-bottom: 5px; }
 
-        /* 3. IOT MONITOR */
+        /* --- 3. IOT MONITOR --- */
         .iot-dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
         .iot-card { background: #1e293b; border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); }
         .monitor-screen { background: #000; border-radius: 10px; height: 300px; position: relative; overflow: hidden; border: 1px solid #333; }
         #ecgCanvas { width: 100%; height: 100%; }
 
-        /* 4. MED SHIELD */
+        /* --- 4. MED SHIELD --- */
         .chat-interface { display: flex; flex-direction: column; height: 550px; background: rgba(30, 41, 59, 0.5); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); }
         .chat-container { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
         .message { display: flex; gap: 10px; max-width: 85%; }
@@ -90,20 +92,25 @@
         .input-area { padding: 1rem; background: rgba(15, 23, 42, 0.6); display: flex; gap: 10px; }
         .input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 30px; color: white; outline: none; }
 
-        /* 5. EMERGENCY */
+        /* --- 5. EMERGENCY --- */
         .emergency-header { background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(30, 41, 59, 0.9)); border: 1px solid #ef4444; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; text-align: center; position: relative; overflow: hidden; }
         .hospital-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; margin-bottom: 1rem; }
         .hospital-card:hover { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
         .badge-cath { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
         .badge-bpjs { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; }
 
-        /* MOBILE RESPONSIVE */
+        /* --- MOBILE RESPONSIVE --- */
         .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 2000; background: #10B981; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(5px); }
 
         @media (max-width: 768px) {
             .mobile-menu-btn { display: flex; }
-            .sidebar { position: fixed; top: 0; left: -100%; height: 100vh; width: 260px; transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.9); padding-top: 2rem; }
+            .sidebar { 
+                position: fixed; top: 0; left: -100%; 
+                height: 100vh; width: 260px; 
+                transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.9); 
+                padding-top: 2rem; 
+            }
             .sidebar.active { left: 0; }
             .sidebar-overlay.active { display: block; }
             .main-content { padding-top: 80px; padding-left: 1.5rem; padding-right: 1.5rem; }
@@ -122,6 +129,7 @@
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
+        
         <nav class="sidebar">
             <div class="logo-area">
                 <h1><i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> CardiCare</h1>
@@ -132,21 +140,21 @@
                 </a>
                 
                 <div class="separator">PERSONAL HEALTH</div>
-                <a class="nav-item active" id="nav-nutri" onclick="switchTab('nutri')">
+                <a class="nav-item active" id="nav-nutri" href="javascript:void(0)" onclick="switchTab('nutri')">
                     <i class="fa-solid fa-apple-whole"></i> Nutri-Guard
                 </a>
-                <a class="nav-item" id="nav-face" onclick="switchTab('face')">
+                <a class="nav-item" id="nav-face" href="javascript:void(0)" onclick="switchTab('face')">
                     <i class="fa-solid fa-face-viewfinder"></i> Face Vitals
                 </a>
-                <a class="nav-item" id="nav-iot" onclick="switchTab('iot')">
+                <a class="nav-item" id="nav-iot" href="javascript:void(0)" onclick="switchTab('iot')">
                     <i class="fa-solid fa-stopwatch"></i> Smart Monitor
                 </a>
-                <a class="nav-item" id="nav-meds" onclick="switchTab('meds')">
+                <a class="nav-item" id="nav-meds" href="javascript:void(0)" onclick="switchTab('meds')">
                     <i class="fa-solid fa-user-doctor"></i> Med-Shield Chat
                 </a>
                 
                 <div class="separator" style="color:#ef4444;">URGENT</div>
-                <a class="nav-item" id="nav-emergency" onclick="switchTab('emergency')">
+                <a class="nav-item" id="nav-emergency" href="javascript:void(0)" onclick="switchTab('emergency')">
                     <i class="fa-solid fa-truck-medical" style="color:#ef4444;"></i> Emergency RS
                 </a>
             </div>
@@ -259,7 +267,10 @@
     
     <script>
         // --- UI LOGIC ---
-        function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
+        function toggleSidebar() { 
+            document.querySelector('.sidebar').classList.toggle('active'); 
+            document.getElementById('sidebarOverlay').classList.toggle('active'); 
+        }
         
         function switchTab(tabName) {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -352,6 +363,7 @@
                     let html = "";
                     top3.forEach(h => {
                         const time = Math.ceil((h.distance / 40) * 60); // Asumsi 40km/jam
+                        // FIX: Memperbaiki Typo URL Maps (${h.lat} bukan {h.lat})
                         const mapLink = `https://www.google.com/maps/dir/?api=1&destination=${h.lat},${h.lng}`;
                         
                         html += `
@@ -368,7 +380,7 @@
                                 <div style="font-size:1.4rem; font-weight:800; color:#ef4444;">${h.distance.toFixed(1)} km</div>
                                 <span style="font-size:0.8rem; color:#cbd5e1;">~${time} menit</span>
                                 <a href="${mapLink}" target="_blank" style="text-decoration:none;">
-                                    <button style="display:block; margin-top:5px; background:white; border:none; padding:5px 10px; border-radius:15px; cursor:pointer; font-weight:bold; font-size:0.8rem;">
+                                    <button style="display:block; margin-top:5px; background:white; border:none; padding:5px 10px; border-radius:15px; cursor:pointer; font-weight:bold; font-size:0.8rem; color:#0f172a;">
                                         <i class="fa-solid fa-location-arrow"></i> NAVIGATE
                                     </button>
                                 </a>
@@ -422,16 +434,14 @@
 
             try {
                 // TRY REAL API (Gemini 2.0 Flash)
-                // Pastikan gemini.js sudah pakai model 'gemini-2.0-flash'
                 const prompt = `Analyze face. Return JSON ONLY: {"hr": number (60-100), "spo2": number (95-100), "stress": "Low/Med", "analysis": "brief text"}`;
                 
-                // Uncomment line below if you have real API Key
+                // UNCOMMENT JIKA SUDAH ADA API KEY BENERAN DI GEMINI.JS
                 // const res = await askGeminiVision(base64, prompt); const data = JSON.parse(res); renderFaceResult(data, "REAL AI");
                 
-                throw new Error("Simulate SafetyNet Trigger"); // Force Dummy for consistent Demo
+                throw new Error("Simulate SafetyNet Trigger"); 
 
             } catch (err) {
-                // CATCH BLOCK (SAFETYNET)
                 console.log("SafetyNet Triggered");
                 setTimeout(() => {
                     const dummy = {
