@@ -13,101 +13,66 @@
 
     <style>
         /* --- GLOBAL --- */
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0f172a;
-            color: white;
-            margin: 0;
-        }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; margin: 0; }
         .app-container { display: flex; height: 100vh; width: 100%; overflow: hidden; }
 
-        /* --- SIDEBAR (Solid & Rapat ke Atas) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
-            width: 260px;
-            min-width: 260px;
-            background-color: #1e293b !important; /* Solid Biru Gelap */
-            padding: 1.5rem;
-            /* PERBAIKAN DISINI: */
-            padding-top: 1rem; /* Jarak atas dikurangi biar naik */
-            display: flex; flex-direction: column; justify-content: flex-start; /* Paksa konten mulai dari atas */
+            width: 260px; min-width: 260px;
+            background-color: #1e293b !important;
+            padding: 1.5rem; padding-top: 1rem;
+            display: flex; flex-direction: column; justify-content: flex-start;
             border-right: 1px solid rgba(255,255,255,0.1);
-            height: 100vh;
-            z-index: 100;
-            box-sizing: border-box;
+            height: 100vh; z-index: 100; box-sizing: border-box;
         }
-
-        /* Logo Area (Dirapatkan) */
-        .logo-area { 
-            margin-bottom: 1.5rem; /* Kurangi jarak ke menu */
-            margin-top: 0.5rem; /* Sedikit jarak dari tepi atas */
-        }
-        .logo-area h1 {
-            font-size: 1.4rem; margin: 0;
-            color: #ffffff !important;
-            font-weight: 800;
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        /* Menu Items */
-        .nav-menu { display: flex; flex-direction: column; gap: 5px; }
+        .logo-area { margin-bottom: 1.5rem; margin-top: 0.5rem; }
+        .logo-area h1 { font-size: 1.4rem; margin: 0; color: #ffffff !important; font-weight: 800; display: flex; align-items: center; gap: 10px; }
         
+        .nav-menu { display: flex; flex-direction: column; gap: 5px; }
         .nav-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 10px 15px; /* Padding menu diperkecil dikit */
-            color: #e2e8f0 !important;
-            text-decoration: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: background 0.2s;
+            display: flex; align-items: center; gap: 12px; padding: 10px 15px;
+            color: #e2e8f0 !important; text-decoration: none; border-radius: 10px;
+            cursor: pointer; font-size: 0.95rem; transition: background 0.2s;
         }
         .nav-item:hover { background-color: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
         .nav-item.active { background-color: #ef4444 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
+        .separator { margin: 1rem 0 0.5rem 10px; font-size: 0.7rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px; }
 
-        .separator { 
-            margin: 1rem 0 0.5rem 10px; /* Jarak separator dikurangi */
-            font-size: 0.7rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px;
-        }
+        /* --- CONTENT --- */
+        .main-content { flex: 1; padding: 2rem; overflow-y: auto; position: relative; background: radial-gradient(circle at top right, rgba(59,130,246,0.1), transparent 40%); }
+        .user-greeting h2 { font-size: 1.5rem; margin: 0; }
+        .user-greeting p { color: #94a3b8; margin-top: 5px; font-size: 0.9rem; }
+        .api-status { background: rgba(16,185,129,0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(16,185,129,0.2); }
 
-        /* --- CONTENT AREA --- */
-        .main-content {
-            flex: 1; padding: 2rem; overflow-y: auto; position: relative;
-            background: radial-gradient(circle at top right, rgba(59,130,246,0.1), transparent 40%);
-        }
-
-        /* --- MOBILE RESPONSIVE --- */
-        .mobile-menu-btn {
-            display: none; position: fixed; top: 15px; left: 15px; z-index: 2000;
-            background: #ef4444; color: white; border: none;
-            width: 45px; height: 45px; border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center;
-        }
-
-        .sidebar-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(5px);
-        }
-
-        @media (max-width: 768px) {
-            .mobile-menu-btn { display: flex; }
-            .sidebar {
-                position: fixed; top: 0; left: -100%;
-                height: 100vh; width: 260px;
-                transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 5px 0 25px rgba(0,0,0,0.9);
-                padding-top: 2rem; /* Tambah dikit di HP biar ga ketabrak status bar HP */
-            }
-            .sidebar.active { left: 0; }
-            .sidebar-overlay.active { display: block; }
-            .main-content { padding-top: 80px; padding-left: 1.5rem; padding-right: 1.5rem; }
-        }
-        
-        /* Tools Styles */
+        /* --- TOOLS UI --- */
         .diagnostic-panel { display: none; animation: fadeIn 0.5s ease; }
         .active-tool { display: block; }
         .upload-box { border: 2px dashed rgba(255,255,255,0.2); border-radius: 16px; min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 2rem; background: rgba(255,255,255,0.02); }
         .result-box { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 1.5rem; min-height: 100px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
         .btn-pulse { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+        /* --- TROPONIN SPECIFIC --- */
+        .trop-input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        .form-control { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; color: white; font-family: 'Inter'; box-sizing: border-box; }
+        .form-control:focus { outline: none; border-color: #ef4444; }
+        .trop-result-card { text-align: center; padding: 2rem; }
+        .risk-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; margin-bottom: 1rem; }
+        .risk-low { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+        .risk-high { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+        .risk-mid { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
+
+        /* MOBILE */
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 2000; background: #ef4444; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(5px); }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: flex; }
+            .sidebar { position: fixed; top: 0; left: -100%; height: 100vh; width: 260px; transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.9); padding-top: 2rem; }
+            .sidebar.active { left: 0; }
+            .sidebar-overlay.active { display: block; }
+            .main-content { padding-top: 80px; padding-left: 1.5rem; padding-right: 1.5rem; }
+            .trop-input-group { grid-template-columns: 1fr; }
+        }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -119,7 +84,6 @@
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
-        
         <nav class="sidebar">
             <div class="logo-area">
                 <h1><i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> CardiCare</h1>
@@ -130,7 +94,7 @@
                     <i class="fa-solid fa-house"></i> Dashboard
                 </a>
                 
-                <div class="separator">TOOLS DIAGNOSIS</div>
+                <div class="separator">IMAGING & LAB</div>
                 
                 <a href="#" class="nav-item active" onclick="switchTool('ekg')" id="nav-ekg">
                     <i class="fa-solid fa-wave-square"></i> EKG Interpreter
@@ -139,19 +103,20 @@
                 <a href="#" class="nav-item" onclick="switchTool('cxr')" id="nav-cxr">
                     <i class="fa-solid fa-x-ray"></i> Rontgen (CXR)
                 </a>
+
+                <a href="#" class="nav-item" onclick="switchTool('trop')" id="nav-trop">
+                    <i class="fa-solid fa-flask"></i> Troponin Lab
+                </a>
             </div>
         </nav>
 
         <main class="main-content">
-            
             <header style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h2 style="margin:0; font-size: 1.5rem;">Console Dokter</h2>
-                    <p style="margin:5px 0 0 0; color: #94a3b8; font-size: 0.9rem;">AI Medical Analysis</p>
+                    <p style="margin:5px 0 0 0; color: #94a3b8; font-size: 0.9rem;">AI Clinical Decision Support</p>
                 </div>
-                <div style="background: rgba(16,185,129,0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(16,185,129,0.2);">
-                    ● ONLINE
-                </div>
+                <div class="api-status">● SYSTEM READY</div>
             </header>
 
             <section id="ekg-tool" class="diagnostic-panel active-tool">
@@ -159,7 +124,6 @@
                     <h3 style="margin:0; font-size:1.2rem;"><i class="fa-solid fa-file-waveform" style="color:#ef4444;"></i> EKG Analysis</h3>
                     <p style="color:#94a3b8; font-size:0.85rem;">Deteksi Aritmia, STEMI, & Interval.</p>
                 </div>
-
                 <div class="upload-box" onclick="document.getElementById('ekgInput').click()">
                     <input type="file" id="ekgInput" accept="image/*" hidden onchange="handleImageUpload(this, 'ekg')">
                     <div id="ekgPreviewArea" style="text-align: center; color: #64748b;">
@@ -168,17 +132,12 @@
                     </div>
                     <img id="ekgImage" style="max-width:100%; max-height:300px; display:none; border-radius:10px;">
                 </div>
-
                 <div class="result-box" id="ekg-report-area">
                     <div id="ekgResultContent" style="text-align:center; color:#64748b; padding:2rem;">
-                        <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i>
-                        <p>Hasil analisa akan muncul di sini.</p>
+                        <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i><p>Hasil analisa akan muncul di sini.</p>
                     </div>
                 </div>
-
-                <button onclick="downloadPDF('ekg-report-area')" class="btn-pulse" style="background: #10B981;">
-                    <i class="fa-solid fa-file-pdf"></i> Simpan Laporan
-                </button>
+                <button onclick="downloadPDF('ekg-report-area')" class="btn-pulse" style="background: #10B981;"><i class="fa-solid fa-file-pdf"></i> Simpan Laporan</button>
             </section>
 
             <section id="cxr-tool" class="diagnostic-panel">
@@ -186,7 +145,6 @@
                     <h3 style="margin:0; font-size:1.2rem;"><i class="fa-solid fa-rib-cage" style="color:#3b82f6;"></i> Chest X-Ray</h3>
                     <p style="color:#94a3b8; font-size:0.85rem;">Deteksi Cardiomegaly (CTR > 50%).</p>
                 </div>
-
                 <div class="upload-box" onclick="document.getElementById('cxrInput').click()">
                     <input type="file" id="cxrInput" accept="image/*" hidden onchange="handleImageUpload(this, 'cxr')">
                     <div id="cxrPreviewArea" style="text-align: center; color: #64748b;">
@@ -195,17 +153,43 @@
                     </div>
                     <img id="cxrImage" style="max-width:100%; max-height:300px; display:none; border-radius:10px;">
                 </div>
-
                 <div class="result-box" id="cxr-report-area">
                     <div id="cxrResultContent" style="text-align:center; color:#64748b; padding:2rem;">
-                        <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i>
-                        <p>Hasil analisa akan muncul di sini.</p>
+                        <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i><p>Hasil analisa akan muncul di sini.</p>
                     </div>
                 </div>
+                <button onclick="downloadPDF('cxr-report-area')" class="btn-pulse" style="background: #10B981;"><i class="fa-solid fa-file-pdf"></i> Simpan Laporan</button>
+            </section>
 
-                <button onclick="downloadPDF('cxr-report-area')" class="btn-pulse" style="background: #10B981;">
-                    <i class="fa-solid fa-file-pdf"></i> Simpan Laporan
-                </button>
+            <section id="trop-tool" class="diagnostic-panel">
+                <div style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                    <h3 style="margin:0; font-size:1.2rem;"><i class="fa-solid fa-flask" style="color:#f59e0b;"></i> Troponin Interpreter</h3>
+                    <p style="color:#94a3b8; font-size:0.85rem;">Analisa Biomarker Jantung (hs-cTnI / hs-cTnT) sesuai ESC Guidelines.</p>
+                </div>
+
+                <div style="background: rgba(30,41,59,0.5); padding: 2rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="trop-input-group">
+                        <div>
+                            <label style="color:#cbd5e1; font-size:0.9rem; display:block; margin-bottom:5px;">Jenis Assay</label>
+                            <select id="assayType" class="form-control">
+                                <option value="hs-cTnI">High-Sensitivity Troponin I (hs-cTnI)</option>
+                                <option value="hs-cTnT">High-Sensitivity Troponin T (hs-cTnT)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="color:#cbd5e1; font-size:0.9rem; display:block; margin-bottom:5px;">Nilai Hasil (ng/L)</label>
+                            <input type="number" id="tropValue" class="form-control" placeholder="Contoh: 52">
+                        </div>
+                    </div>
+                    <button onclick="analyzeTroponin()" class="btn-pulse" style="background: #3b82f6;">
+                        <i class="fa-solid fa-calculator"></i> Analisa Risiko (0h Algorithm)
+                    </button>
+                </div>
+
+                <div class="result-box" id="trop-report-area" style="display:none; animation: fadeIn 0.5s ease;">
+                    <div id="tropResultContent" class="trop-result-card">
+                        </div>
+                </div>
             </section>
 
         </main>
@@ -216,29 +200,79 @@
     <script src="js/doctor.js"></script>
 
     <script>
-        function toggleSidebar() {
-            document.querySelector('.sidebar').classList.toggle('active');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
-        }
+        function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
 
         function switchTool(tool) {
+            // Reset active classes
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.diagnostic-panel').forEach(el => el.classList.remove('active-tool'));
 
+            // Set new active
             if(tool === 'ekg') {
                 document.getElementById('ekg-tool').classList.add('active-tool');
                 document.getElementById('nav-ekg').classList.add('active');
-            } else {
+            } else if(tool === 'cxr') {
                 document.getElementById('cxr-tool').classList.add('active-tool');
                 document.getElementById('nav-cxr').classList.add('active');
+            } else if(tool === 'trop') {
+                document.getElementById('trop-tool').classList.add('active-tool');
+                document.getElementById('nav-trop').classList.add('active');
             }
             if(window.innerWidth < 768) toggleSidebar();
+        }
+
+        // --- TROPONIN LOGIC (Medical Logic Demo) ---
+        function analyzeTroponin() {
+            const assay = document.getElementById('assayType').value;
+            const val = parseFloat(document.getElementById('tropValue').value);
+            const reportArea = document.getElementById('trop-report-area');
+            const content = document.getElementById('tropResultContent');
+
+            if (isNaN(val)) { alert("Masukkan nilai numerik yang valid."); return; }
+
+            reportArea.style.display = 'block';
+            content.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color:#3b82f6;"></i><p>Menganalisis Kurva Enzim...</p>`;
+
+            // Simulasi Delay Processing
+            setTimeout(() => {
+                let riskClass = '';
+                let interpretation = '';
+                let suggestion = '';
+                
+                // Simplified Rule-in/Rule-out Logic (Reference: ESC NSTEMI Guidelines 2020)
+                // Thresholds are approximate for demo purposes (Abbott/Roche assays)
+                let limitLow = (assay === 'hs-cTnI') ? 5 : 5;   // Very low cutoff
+                let limitHigh = (assay === 'hs-cTnI') ? 52 : 52; // High cutoff (99th percentile usually ~26-50 depending on gender)
+
+                if (val < limitLow) {
+                    riskClass = 'risk-low';
+                    interpretation = 'RULE-OUT (Low Risk)';
+                    suggestion = 'Kemungkinan kecil Infark Miokard Akut (AMI). Pertimbangkan diagnosis banding lain (GERD, Musculoskeletal). Pasien dapat dipertimbangkan rawat jalan jika nyeri dada > 3 jam.';
+                } else if (val >= limitHigh) {
+                    riskClass = 'risk-high';
+                    interpretation = 'RULE-IN (High Risk)';
+                    suggestion = 'Indikasi kuat NSTEMI/STEMI Type 1. Segera lakukan EKG serial, konsul Kardiolog, dan siapkan loading dose antiplatelet. Pertimbangkan rawat ICCU/Cath Lab.';
+                } else {
+                    riskClass = 'risk-mid';
+                    interpretation = 'OBSERVASI (Grey Zone)';
+                    suggestion = 'Kadar di atas normal namun belum konklusif. Wajib periksa ulang troponin 1 jam (1h-Algorithm) atau 3 jam lagi untuk melihat delta kenaikan.';
+                }
+
+                content.innerHTML = `
+                    <span class="risk-badge ${riskClass}">${interpretation}</span>
+                    <h2 style="margin:0 0 10px 0; color:white;">${val} ng/L</h2>
+                    <p style="color:#cbd5e1; font-size:0.95rem; line-height:1.6;">${suggestion}</p>
+                    <div style="margin-top:1.5rem; padding:1rem; background:rgba(255,255,255,0.05); border-radius:8px; font-size:0.8rem; text-align:left; color:#94a3b8;">
+                        <i class="fa-solid fa-circle-info"></i> <b>Catatan Medis:</b> Interpretasi ini berdasarkan algoritma ESC 0h/1h. Keputusan klinis tetap di tangan dokter penanggung jawab (DPJP) dengan mempertimbangkan gejala klinis dan EKG.
+                    </div>
+                `;
+            }, 1000);
         }
     </script>
 
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center;">
         <i class="fa-solid fa-heart-pulse fa-bounce" style="color: #ef4444; font-size: 4rem;"></i>
-        <h3 style="color:white; margin-top:1rem;">AI Working...</h3>
+        <h3 style="color:white; margin-top:1rem;">Menganalisis Data...</h3>
     </div>
 
 </body>
