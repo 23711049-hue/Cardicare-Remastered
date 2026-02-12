@@ -15,37 +15,37 @@
         /* --- GLOBAL --- */
         body {
             font-family: 'Inter', sans-serif;
-            background: #0f172a; /* Background Utama Gelap */
+            background: #0f172a;
             color: white;
             margin: 0;
         }
         .app-container { display: flex; height: 100vh; width: 100%; overflow: hidden; }
 
-        /* --- SIDEBAR STYLE (SOLID - NO BLUR) --- */
+        /* --- SIDEBAR (Solid & Rapat ke Atas) --- */
         .sidebar {
             width: 260px;
             min-width: 260px;
-            /* Perbaikan Utama: Background SOLID, bukan transparan */
-            background-color: #1e293b !important; 
-            background-image: none !important;
-            backdrop-filter: none !important; /* Matikan efek blur kaca */
-            -webkit-backdrop-filter: none !important;
-            
+            background-color: #1e293b !important; /* Solid Biru Gelap */
             padding: 1.5rem;
-            display: flex; flex-direction: column;
+            /* PERBAIKAN DISINI: */
+            padding-top: 1rem; /* Jarak atas dikurangi biar naik */
+            display: flex; flex-direction: column; justify-content: flex-start; /* Paksa konten mulai dari atas */
             border-right: 1px solid rgba(255,255,255,0.1);
             height: 100vh;
-            z-index: 100; /* Layer di atas konten */
-            position: relative;
+            z-index: 100;
+            box-sizing: border-box;
         }
 
-        /* Logo Area */
-        .logo-area { margin-bottom: 2rem; }
+        /* Logo Area (Dirapatkan) */
+        .logo-area { 
+            margin-bottom: 1.5rem; /* Kurangi jarak ke menu */
+            margin-top: 0.5rem; /* Sedikit jarak dari tepi atas */
+        }
         .logo-area h1 {
-            font-size: 1.5rem; margin: 0;
-            color: #ffffff !important; /* Putih Mutlak */
-            opacity: 1 !important;
+            font-size: 1.4rem; margin: 0;
+            color: #ffffff !important;
             font-weight: 800;
+            display: flex; align-items: center; gap: 10px;
         }
 
         /* Menu Items */
@@ -53,31 +53,20 @@
         
         .nav-item {
             display: flex; align-items: center; gap: 12px;
-            padding: 12px 15px;
-            color: #e2e8f0 !important; /* Putih Terang */
-            opacity: 1 !important; /* Tidak boleh pudar */
+            padding: 10px 15px; /* Padding menu diperkecil dikit */
+            color: #e2e8f0 !important;
             text-decoration: none;
             border-radius: 10px;
             cursor: pointer;
             font-size: 0.95rem;
             transition: background 0.2s;
         }
-        
-        .nav-item:hover { 
-            background-color: rgba(255,255,255,0.1) !important; 
-            color: #ffffff !important;
-        }
-        
-        .nav-item.active { 
-            background-color: #ef4444 !important; /* Merah Solid */
-            color: #ffffff !important;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
+        .nav-item:hover { background-color: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
+        .nav-item.active { background-color: #ef4444 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
 
         .separator { 
-            margin: 1.5rem 0 0.5rem 10px; 
-            font-size: 0.75rem; 
-            color: #94a3b8; font-weight: 800; letter-spacing: 1px;
+            margin: 1rem 0 0.5rem 10px; /* Jarak separator dikurangi */
+            font-size: 0.7rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px;
         }
 
         /* --- CONTENT AREA --- */
@@ -88,12 +77,10 @@
 
         /* --- MOBILE RESPONSIVE --- */
         .mobile-menu-btn {
-            display: none; /* Desktop Hidden */
-            position: fixed; top: 15px; left: 15px; z-index: 2000;
+            display: none; position: fixed; top: 15px; left: 15px; z-index: 2000;
             background: #ef4444; color: white; border: none;
             width: 45px; height: 45px; border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer;
-            align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center;
         }
 
         .sidebar-overlay {
@@ -108,19 +95,19 @@
                 height: 100vh; width: 260px;
                 transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 5px 0 25px rgba(0,0,0,0.9);
+                padding-top: 2rem; /* Tambah dikit di HP biar ga ketabrak status bar HP */
             }
             .sidebar.active { left: 0; }
             .sidebar-overlay.active { display: block; }
-            .main-content { padding-top: 80px; }
+            .main-content { padding-top: 80px; padding-left: 1.5rem; padding-right: 1.5rem; }
         }
         
-        /* Utility */
+        /* Tools Styles */
         .diagnostic-panel { display: none; animation: fadeIn 0.5s ease; }
         .active-tool { display: block; }
         .upload-box { border: 2px dashed rgba(255,255,255,0.2); border-radius: 16px; min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 2rem; background: rgba(255,255,255,0.02); }
         .result-box { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 1.5rem; min-height: 100px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
         .btn-pulse { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -159,18 +146,18 @@
             
             <header style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h2 style="margin:0; font-size: 1.8rem;">Console Dokter AI</h2>
-                    <p style="margin:5px 0 0 0; color: #94a3b8;">Analisa Citra Medis (EKG & Radiologi)</p>
+                    <h2 style="margin:0; font-size: 1.5rem;">Console Dokter</h2>
+                    <p style="margin:5px 0 0 0; color: #94a3b8; font-size: 0.9rem;">AI Medical Analysis</p>
                 </div>
-                <div style="background: rgba(16,185,129,0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(16,185,129,0.2);">
+                <div style="background: rgba(16,185,129,0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(16,185,129,0.2);">
                     ● ONLINE
                 </div>
             </header>
 
             <section id="ekg-tool" class="diagnostic-panel active-tool">
                 <div style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                    <h3 style="margin:0;"><i class="fa-solid fa-file-waveform" style="color:#ef4444;"></i> EKG Analysis</h3>
-                    <p style="color:#94a3b8; font-size:0.9rem;">Deteksi Aritmia, STEMI, dan Kelainan Interval.</p>
+                    <h3 style="margin:0; font-size:1.2rem;"><i class="fa-solid fa-file-waveform" style="color:#ef4444;"></i> EKG Analysis</h3>
+                    <p style="color:#94a3b8; font-size:0.85rem;">Deteksi Aritmia, STEMI, & Interval.</p>
                 </div>
 
                 <div class="upload-box" onclick="document.getElementById('ekgInput').click()">
@@ -196,8 +183,8 @@
 
             <section id="cxr-tool" class="diagnostic-panel">
                 <div style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-                    <h3 style="margin:0;"><i class="fa-solid fa-rib-cage" style="color:#3b82f6;"></i> Chest X-Ray</h3>
-                    <p style="color:#94a3b8; font-size:0.9rem;">Deteksi Cardiomegaly (CTR > 50%).</p>
+                    <h3 style="margin:0; font-size:1.2rem;"><i class="fa-solid fa-rib-cage" style="color:#3b82f6;"></i> Chest X-Ray</h3>
+                    <p style="color:#94a3b8; font-size:0.85rem;">Deteksi Cardiomegaly (CTR > 50%).</p>
                 </div>
 
                 <div class="upload-box" onclick="document.getElementById('cxrInput').click()">
