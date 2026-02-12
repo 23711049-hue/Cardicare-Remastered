@@ -13,46 +13,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Tombol Menu Mobile */
-        .mobile-menu-btn {
-            display: none; /* Sembunyi di Desktop */
-            position: fixed; top: 15px; left: 15px; z-index: 2000;
-            background: #ef4444; color: white; border: none;
-            width: 45px; height: 45px; border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-size: 1.2rem; cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .mobile-menu-btn:active { transform: scale(0.9); }
-
-        /* Overlay Gelap saat Sidebar Muncul */
+        /* Overlay Gelap (Background saat menu terbuka) */
         .sidebar-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); z-index: 1001; backdrop-filter: blur(5px);
         }
 
-        /* Responsif Mobile */
+        /* Tampilan Mobile */
         @media (max-width: 768px) {
-            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
-            
+            /* Sidebar jadi melayang di kiri */
             .sidebar {
-                position: fixed; top: 0; left: -100%; /* Sembunyi di kiri layar */
-                height: 100vh; width: 260px; z-index: 1002;
+                position: fixed !important; 
+                top: 0; left: -100%; /* Sembunyi */
+                height: 100vh; width: 260px; 
+                z-index: 1002;
                 transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 5px 0 25px rgba(0,0,0,0.5);
             }
-            .sidebar.active { left: 0; } /* Muncul saat kelas active ada */
-            .sidebar-overlay.active { display: block; }
+            .sidebar.active { left: 0 !important; } /* Muncul */
+            .sidebar-overlay.active { display: block !important; }
             
-            /* Geser konten utama biar ga ketutupan tombol */
-            .main-content { padding-top: 80px; }
+            /* Konten turun dikit biar ga ketutupan tombol */
+            .main-content { padding-top: 80px !important; }
+            
+            /* Tampilkan Tombol Menu */
+            .mobile-menu-btn { display: flex !important; }
         }
+        
+        /* Tombol Menu (Default Desktop: Sembunyi) */
+        .mobile-menu-btn { display: none; }
     </style>
 </head>
 <body>
 
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+    <button class="mobile-menu-btn" onclick="toggleSidebar()" 
+        style="position: fixed; top: 20px; left: 20px; z-index: 9999; 
+               background: #ef4444; color: white; border: none; 
+               width: 50px; height: 50px; border-radius: 50%; 
+               align-items: center; justify-content: center; 
+               box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; font-size: 1.5rem;">
         <i class="fa-solid fa-bars"></i>
     </button>
+
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
@@ -121,7 +124,7 @@
             <section id="cxr-tool" class="diagnostic-panel">
                 <div class="panel-header">
                     <h3><i class="fa-solid fa-rib-cage"></i> Chest X-Ray Analysis</h3>
-                    <p>Analisis rontgen dada untuk deteksi pembesaran jantung (Cardiomegaly) dan kondisi paru.</p>
+                    <p>Analisis rontgen dada untuk deteksi pembesaran jantung (Cardiomegaly).</p>
                 </div>
 
                 <div class="analysis-workspace">
@@ -160,6 +163,7 @@
     <script src="js/doctor.js"></script>
 
     <script>
+        // Fungsi Toggle Sidebar Mobile
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
             document.getElementById('sidebarOverlay').classList.toggle('active');
