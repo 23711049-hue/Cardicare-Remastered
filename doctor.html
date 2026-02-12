@@ -7,120 +7,121 @@
     <title>CardiCare | Clinical Lab AI</title>
     
     <link rel="stylesheet" href="css/style.css">
-    
+    <link rel="stylesheet" href="css/doctor.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. GLOBAL STYLE --- */
+        /* --- GLOBAL --- */
         body {
             font-family: 'Inter', sans-serif;
-            background: #0f172a;
+            background: #0f172a; /* Background Utama Gelap */
             color: white;
             margin: 0;
-            overflow: hidden; /* Sidebar diam, konten scroll */
         }
-        .app-container { display: flex; height: 100vh; }
+        .app-container { display: flex; height: 100vh; width: 100%; overflow: hidden; }
 
-        /* --- 2. SIDEBAR STYLE (DESKTOP DEFAULT) --- */
+        /* --- SIDEBAR STYLE (SOLID - NO BLUR) --- */
         .sidebar {
             width: 260px;
-            min-width: 260px; /* Paksa lebar */
-            background: #1e293b;
+            min-width: 260px;
+            /* Perbaikan Utama: Background SOLID, bukan transparan */
+            background-color: #1e293b !important; 
+            background-image: none !important;
+            backdrop-filter: none !important; /* Matikan efek blur kaca */
+            -webkit-backdrop-filter: none !important;
+            
             padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             border-right: 1px solid rgba(255,255,255,0.1);
-            height: 100%; /* Paksa tinggi */
-            box-sizing: border-box; /* Agar padding tidak merusak lebar */
-            z-index: 100;
+            height: 100vh;
+            z-index: 100; /* Layer di atas konten */
+            position: relative;
         }
 
+        /* Logo Area */
+        .logo-area { margin-bottom: 2rem; }
         .logo-area h1 {
-            font-size: 1.5rem; margin: 0 0 2rem 0;
-            color: white; font-weight: 800; letter-spacing: -1px;
-            display: flex; align-items: center; gap: 10px;
+            font-size: 1.5rem; margin: 0;
+            color: #ffffff !important; /* Putih Mutlak */
+            opacity: 1 !important;
+            font-weight: 800;
         }
 
+        /* Menu Items */
+        .nav-menu { display: flex; flex-direction: column; gap: 5px; }
+        
         .nav-item {
             display: flex; align-items: center; gap: 12px;
             padding: 12px 15px;
-            color: #94a3b8; text-decoration: none;
-            border-radius: 10px; margin-bottom: 5px;
-            transition: all 0.3s ease; cursor: pointer;
+            color: #e2e8f0 !important; /* Putih Terang */
+            opacity: 1 !important; /* Tidak boleh pudar */
+            text-decoration: none;
+            border-radius: 10px;
+            cursor: pointer;
             font-size: 0.95rem;
+            transition: background 0.2s;
         }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-item.active { background: #ef4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-        .separator { margin: 1.5rem 0 0.5rem 10px; font-size: 0.7rem; color: #64748b; font-weight: 800; letter-spacing: 1px; }
+        
+        .nav-item:hover { 
+            background-color: rgba(255,255,255,0.1) !important; 
+            color: #ffffff !important;
+        }
+        
+        .nav-item.active { 
+            background-color: #ef4444 !important; /* Merah Solid */
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
 
-        /* --- 3. MAIN CONTENT --- */
+        .separator { 
+            margin: 1.5rem 0 0.5rem 10px; 
+            font-size: 0.75rem; 
+            color: #94a3b8; font-weight: 800; letter-spacing: 1px;
+        }
+
+        /* --- CONTENT AREA --- */
         .main-content {
             flex: 1; padding: 2rem; overflow-y: auto; position: relative;
             background: radial-gradient(circle at top right, rgba(59,130,246,0.1), transparent 40%);
         }
-        .user-greeting h2 { font-size: 1.8rem; margin: 0; }
-        .user-greeting p { color: #64748b; margin-top: 5px; }
-        .api-status { position: absolute; top: 2rem; right: 2rem; background: rgba(16,185,129,0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; border: 1px solid rgba(16,185,129,0.2); }
 
-        /* --- 4. TOOL STYLES --- */
-        .diagnostic-panel { display: none; animation: fadeIn 0.5s ease; }
-        .active-tool { display: block; }
-        .panel-header { margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; }
-        
-        .upload-box {
-            border: 2px dashed rgba(255,255,255,0.2); border-radius: 16px;
-            min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s; background: rgba(255,255,255,0.02); position: relative; overflow: hidden;
+        /* --- MOBILE RESPONSIVE --- */
+        .mobile-menu-btn {
+            display: none; /* Desktop Hidden */
+            position: fixed; top: 15px; left: 15px; z-index: 2000;
+            background: #ef4444; color: white; border: none;
+            width: 45px; height: 45px; border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer;
+            align-items: center; justify-content: center;
         }
-        .upload-box:hover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
-        .preview-placeholder { text-align: center; color: #64748b; }
-        .image-preview { max-width: 100%; max-height: 300px; border-radius: 10px; display: none; }
-        
-        .result-box { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 1.5rem; margin-top: 1.5rem; border: 1px solid rgba(255,255,255,0.1); min-height: 100px; }
-        .empty-result { text-align: center; color: #64748b; padding: 2rem; }
 
-        .btn-pulse {
-            border: none; padding: 15px; border-radius: 10px; color: white; font-weight: bold; cursor: pointer;
-            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem;
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(5px);
         }
-        .btn-pulse:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16,185,129,0.4); }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* --- 5. MOBILE RESPONSIVE --- */
-        .mobile-menu-btn { display: none; } /* Default Hidden */
-        .sidebar-overlay { display: none; }
 
         @media (max-width: 768px) {
-            .app-container { flex-direction: column; }
-            
-            .mobile-menu-btn {
-                display: flex !important;
-                position: fixed; top: 15px; left: 15px; z-index: 2000;
-                background: #ef4444; color: white; border: none;
-                width: 45px; height: 45px; border-radius: 50%;
-                align-items: center; justify-content: center;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer;
-            }
-
+            .mobile-menu-btn { display: flex; }
             .sidebar {
-                position: fixed; top: 0; left: -100%; /* Sembunyi */
-                height: 100vh; width: 260px; z-index: 2001;
+                position: fixed; top: 0; left: -100%;
+                height: 100vh; width: 260px;
                 transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 5px 0 25px rgba(0,0,0,0.8);
+                box-shadow: 5px 0 25px rgba(0,0,0,0.9);
             }
             .sidebar.active { left: 0; }
-            
-            .sidebar-overlay {
-                display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.8); z-index: 2000; backdrop-filter: blur(5px);
-            }
             .sidebar-overlay.active { display: block; }
-
-            .main-content { padding-top: 80px; } /* Jarak buat tombol */
-            .api-status { top: 20px; right: 20px; }
+            .main-content { padding-top: 80px; }
         }
+        
+        /* Utility */
+        .diagnostic-panel { display: none; animation: fadeIn 0.5s ease; }
+        .active-tool { display: block; }
+        .upload-box { border: 2px dashed rgba(255,255,255,0.2); border-radius: 16px; min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; margin-bottom: 2rem; background: rgba(255,255,255,0.02); }
+        .result-box { background: rgba(0,0,0,0.3); border-radius: 16px; padding: 1.5rem; min-height: 100px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
+        .btn-pulse { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -131,18 +132,23 @@
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div class="app-container">
+        
         <nav class="sidebar">
             <div class="logo-area">
                 <h1><i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> CardiCare</h1>
             </div>
+            
             <div class="nav-menu">
                 <a href="index.html" class="nav-item">
                     <i class="fa-solid fa-house"></i> Dashboard
                 </a>
+                
                 <div class="separator">TOOLS DIAGNOSIS</div>
+                
                 <a href="#" class="nav-item active" onclick="switchTool('ekg')" id="nav-ekg">
-                    <i class="fa-solid fa-wave-square"></i> EKG Analysis
+                    <i class="fa-solid fa-wave-square"></i> EKG Interpreter
                 </a>
+                
                 <a href="#" class="nav-item" onclick="switchTool('cxr')" id="nav-cxr">
                     <i class="fa-solid fa-x-ray"></i> Rontgen (CXR)
                 </a>
@@ -151,72 +157,68 @@
 
         <main class="main-content">
             
-            <header>
-                <div class="user-greeting">
-                    <h2>Console Dokter AI</h2>
-                    <p>Analisa Citra Medis (EKG & Radiologi)</p>
+            <header style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 style="margin:0; font-size: 1.8rem;">Console Dokter AI</h2>
+                    <p style="margin:5px 0 0 0; color: #94a3b8;">Analisa Citra Medis (EKG & Radiologi)</p>
                 </div>
-                <div class="api-status">
-                    <span class="dot">●</span> ONLINE
+                <div style="background: rgba(16,185,129,0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(16,185,129,0.2);">
+                    ● ONLINE
                 </div>
             </header>
 
             <section id="ekg-tool" class="diagnostic-panel active-tool">
-                <div class="panel-header">
-                    <h3><i class="fa-solid fa-file-waveform" style="color:#ef4444;"></i> EKG Strip Interpreter</h3>
-                    <p>Upload foto strip EKG untuk mendeteksi Aritmia atau STEMI.</p>
+                <div style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                    <h3 style="margin:0;"><i class="fa-solid fa-file-waveform" style="color:#ef4444;"></i> EKG Analysis</h3>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Deteksi Aritmia, STEMI, dan Kelainan Interval.</p>
                 </div>
 
-                <div class="analysis-workspace">
-                    <div class="upload-box" onclick="document.getElementById('ekgInput').click()">
-                        <input type="file" id="ekgInput" accept="image/*" hidden onchange="handleImageUpload(this, 'ekg')">
-                        <div id="ekgPreviewArea" class="preview-placeholder">
-                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:3rem; margin-bottom:10px;"></i>
-                            <p>Klik / Drag Foto EKG Kesini</p>
-                        </div>
-                        <img id="ekgImage" class="image-preview">
+                <div class="upload-box" onclick="document.getElementById('ekgInput').click()">
+                    <input type="file" id="ekgInput" accept="image/*" hidden onchange="handleImageUpload(this, 'ekg')">
+                    <div id="ekgPreviewArea" style="text-align: center; color: #64748b;">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                        <p>Klik Upload Foto EKG</p>
                     </div>
-
-                    <div class="result-box" id="ekg-report-area">
-                        <div id="ekgResultContent" class="empty-result">
-                            <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i>
-                            <p>Hasil analisa AI akan muncul di sini.</p>
-                        </div>
-                    </div>
-
-                    <button onclick="downloadPDF('ekg-report-area')" class="btn-pulse" style="background: #10B981; margin-top: 1rem; width: 100%;">
-                        <i class="fa-solid fa-file-pdf"></i> Simpan Laporan PDF
-                    </button>
+                    <img id="ekgImage" style="max-width:100%; max-height:300px; display:none; border-radius:10px;">
                 </div>
+
+                <div class="result-box" id="ekg-report-area">
+                    <div id="ekgResultContent" style="text-align:center; color:#64748b; padding:2rem;">
+                        <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i>
+                        <p>Hasil analisa akan muncul di sini.</p>
+                    </div>
+                </div>
+
+                <button onclick="downloadPDF('ekg-report-area')" class="btn-pulse" style="background: #10B981;">
+                    <i class="fa-solid fa-file-pdf"></i> Simpan Laporan
+                </button>
             </section>
 
             <section id="cxr-tool" class="diagnostic-panel">
-                <div class="panel-header">
-                    <h3><i class="fa-solid fa-rib-cage" style="color:#3b82f6;"></i> Chest X-Ray Analyzer</h3>
-                    <p>Analisa rontgen dada untuk deteksi Cardiomegaly (CTR > 50%).</p>
+                <div style="margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                    <h3 style="margin:0;"><i class="fa-solid fa-rib-cage" style="color:#3b82f6;"></i> Chest X-Ray</h3>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Deteksi Cardiomegaly (CTR > 50%).</p>
                 </div>
 
-                <div class="analysis-workspace">
-                    <div class="upload-box" onclick="document.getElementById('cxrInput').click()">
-                        <input type="file" id="cxrInput" accept="image/*" hidden onchange="handleImageUpload(this, 'cxr')">
-                        <div id="cxrPreviewArea" class="preview-placeholder">
-                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:3rem; margin-bottom:10px;"></i>
-                            <p>Klik / Drag Foto Rontgen Kesini</p>
-                        </div>
-                        <img id="cxrImage" class="image-preview">
+                <div class="upload-box" onclick="document.getElementById('cxrInput').click()">
+                    <input type="file" id="cxrInput" accept="image/*" hidden onchange="handleImageUpload(this, 'cxr')">
+                    <div id="cxrPreviewArea" style="text-align: center; color: #64748b;">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                        <p>Klik Upload Foto Rontgen</p>
                     </div>
-
-                    <div class="result-box" id="cxr-report-area">
-                        <div id="cxrResultContent" class="empty-result">
-                            <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i>
-                            <p>Hasil analisa AI akan muncul di sini.</p>
-                        </div>
-                    </div>
-
-                    <button onclick="downloadPDF('cxr-report-area')" class="btn-pulse" style="background: #10B981; margin-top: 1rem; width: 100%;">
-                        <i class="fa-solid fa-file-pdf"></i> Simpan Laporan PDF
-                    </button>
+                    <img id="cxrImage" style="max-width:100%; max-height:300px; display:none; border-radius:10px;">
                 </div>
+
+                <div class="result-box" id="cxr-report-area">
+                    <div id="cxrResultContent" style="text-align:center; color:#64748b; padding:2rem;">
+                        <i class="fa-solid fa-microchip" style="font-size:2rem; margin-bottom:10px;"></i>
+                        <p>Hasil analisa akan muncul di sini.</p>
+                    </div>
+                </div>
+
+                <button onclick="downloadPDF('cxr-report-area')" class="btn-pulse" style="background: #10B981;">
+                    <i class="fa-solid fa-file-pdf"></i> Simpan Laporan
+                </button>
             </section>
 
         </main>
@@ -227,18 +229,14 @@
     <script src="js/doctor.js"></script>
 
     <script>
-        // TOGGLE SIDEBAR MOBILE
         function toggleSidebar() {
             document.querySelector('.sidebar').classList.toggle('active');
             document.getElementById('sidebarOverlay').classList.toggle('active');
         }
 
-        // SWITCH TABS (EKG <-> CXR)
         function switchTool(tool) {
-            document.getElementById('ekg-tool').classList.remove('active-tool');
-            document.getElementById('cxr-tool').classList.remove('active-tool');
-            document.getElementById('nav-ekg').classList.remove('active');
-            document.getElementById('nav-cxr').classList.remove('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.diagnostic-panel').forEach(el => el.classList.remove('active-tool'));
 
             if(tool === 'ekg') {
                 document.getElementById('ekg-tool').classList.add('active-tool');
@@ -247,15 +245,13 @@
                 document.getElementById('cxr-tool').classList.add('active-tool');
                 document.getElementById('nav-cxr').classList.add('active');
             }
-            
-            // Tutup sidebar di mobile setelah klik
             if(window.innerWidth < 768) toggleSidebar();
         }
     </script>
 
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; flex-direction:column; justify-content:center; align-items:center;">
         <i class="fa-solid fa-heart-pulse fa-bounce" style="color: #ef4444; font-size: 4rem;"></i>
-        <h3 style="color:white; margin-top:1rem;">Sedang Menganalisis...</h3>
+        <h3 style="color:white; margin-top:1rem;">AI Working...</h3>
     </div>
 
 </body>
