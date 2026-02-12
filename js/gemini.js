@@ -9,8 +9,8 @@ const API_KEY = (() => {
     return null;
 })();
 
-// Pakai Model 2.5 Flash (Sesuai request code lama)
-const MODEL_NAME = (typeof CONFIG !== 'undefined' && CONFIG.MODEL_NAME) ? CONFIG.MODEL_NAME : "gemini-2.5-flash";
+// Pakai Model 2.0 Flash (Sesuai request code lama)
+const MODEL_NAME = (typeof CONFIG !== 'undefined' && CONFIG.MODEL_NAME) ? CONFIG.MODEL_NAME : "gemini-2.0-flash";
 const BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
 
 // --- FUNGSI PENYELAMAT (DUMMY DATA) ---
