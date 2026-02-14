@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CardiCare | Patient Portal</title>
+    <title>MediCore | Patient Super App</title>
     
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- GLOBAL & LAYOUT --- */
+        /* --- GLOBAL --- */
         body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; margin: 0; }
         .app-container { display: flex; height: 100vh; width: 100%; overflow: hidden; }
 
@@ -21,15 +21,11 @@
             padding: 1.5rem; padding-top: 1rem;
             display: flex; flex-direction: column; justify-content: flex-start;
             border-right: 1px solid rgba(255,255,255,0.1);
-            height: 100vh; 
-            z-index: 100; /* Agar di atas konten */
-            position: relative; /* WAJIB ADA agar z-index jalan di Desktop */
-            box-sizing: border-box;
+            height: 100vh; z-index: 100; box-sizing: border-box; position: relative;
         }
         .logo-area { margin-bottom: 1.5rem; margin-top: 0.5rem; }
         .logo-area h1 { font-size: 1.4rem; margin: 0; color: #ffffff !important; font-weight: 800; display: flex; align-items: center; gap: 10px; }
         
-        /* Menu Items */
         .nav-menu { display: flex; flex-direction: column; gap: 5px; }
         .nav-item {
             display: flex; align-items: center; gap: 12px; padding: 10px 15px;
@@ -37,87 +33,57 @@
             cursor: pointer; font-size: 0.95rem; transition: background 0.2s;
         }
         .nav-item:hover { background-color: rgba(255,255,255,0.1) !important; color: #ffffff !important; }
-        .nav-item.active { background-color: #10B981 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+        .nav-item.active { background-color: #3b82f6 !important; color: #ffffff !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
         
-        /* Warna Khusus Menu */
-        .nav-item#nav-face.active { background-color: #f59e0b !important; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
-        .nav-item#nav-iot.active { background-color: #3b82f6 !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); }
+        /* Custom Colors per Feature */
+        .nav-item#nav-drugs.active { background-color: #f59e0b !important; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+        .nav-item#nav-lab.active { background-color: #10b981 !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+        .nav-item#nav-triage.active { background-color: #8b5cf6 !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
         .nav-item#nav-emergency.active { background-color: #ef4444 !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4); }
-        
+
         .separator { margin: 1rem 0 0.5rem 10px; font-size: 0.7rem; color: #94a3b8; font-weight: 800; letter-spacing: 1px; }
 
         /* --- CONTENT --- */
-        .main-content { 
-            flex: 1; padding: 2rem; overflow-y: auto; position: relative; 
-            background: radial-gradient(circle at top right, rgba(16,185,129,0.1), transparent 40%); 
-            z-index: 1; /* Pastikan konten di bawah sidebar saat overlap */
-        }
+        .main-content { flex: 1; padding: 2rem; overflow-y: auto; position: relative; background: radial-gradient(circle at top right, rgba(59,130,246,0.1), transparent 40%); }
         .user-greeting h2 { font-size: 1.5rem; margin: 0; }
         .user-greeting p { color: #94a3b8; margin-top: 5px; font-size: 0.9rem; }
 
         /* --- MODULES --- */
         .module-section { display: none; animation: fadeIn 0.5s ease; margin-top: 2rem; }
         .active-module { display: block; }
-        .glass-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; }
+        
+        /* Card Styles */
+        .glass-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; }
+        .upload-zone { text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; transition: 0.3s; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(255,255,255,0.02); border-radius: 12px; }
+        .upload-zone:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
 
-        /* --- 1. NUTRI GUARD --- */
-        .scanner-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem; }
-        .upload-zone { text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; transition: 0.3s; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(255,255,255,0.02); }
-        .upload-zone:hover { border-color: #10B981; background: rgba(16, 185, 129, 0.05); }
-
-        /* --- 2. FACE VITALS --- */
-        .camera-container { width: 100%; max-width: 600px; margin: 0 auto; position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 2px solid #334155; }
-        #webcam { width: 100%; transform: scaleX(-1); }
-        .overlay-hud { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; display: flex; justify-content: center; align-items: center; }
-        .face-guide { width: 250px; height: 300px; border: 2px dashed rgba(16,185,129,0.5); border-radius: 50% 50% 40% 40%; position: relative; }
-        .scan-line { width: 100%; height: 4px; background: #10B981; position: absolute; top: 0; animation: scanMove 3s infinite linear; box-shadow: 0 0 15px #10B981; }
-        .face-result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
-        .metric-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 12px; text-align: center; }
-        .metric-val { font-size: 2rem; font-weight: 800; display: block; margin-bottom: 5px; }
-
-        /* --- 3. IOT MONITOR --- */
-        .iot-dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
-        .iot-card { background: #1e293b; border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1); }
-        .monitor-screen { background: #000; border-radius: 10px; height: 300px; position: relative; overflow: hidden; border: 1px solid #333; }
-        #ecgCanvas { width: 100%; height: 100%; }
-
-        /* --- 4. MED SHIELD --- */
-        .chat-interface { display: flex; flex-direction: column; height: 550px; background: rgba(30, 41, 59, 0.5); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); }
+        /* Chat Interface (Triage) */
+        .chat-interface { display: flex; flex-direction: column; height: 500px; background: rgba(15, 23, 42, 0.6); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1); }
         .chat-container { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
         .message { display: flex; gap: 10px; max-width: 85%; }
         .message.bot-message { align-self: flex-start; }
         .message.user-message { align-self: flex-end; flex-direction: row-reverse; }
         .msg-content { padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; background: rgba(255,255,255,0.1); }
-        .user-message .msg-content { background: #2563EB; }
-        .input-area { padding: 1rem; background: rgba(15, 23, 42, 0.6); display: flex; gap: 10px; }
+        .user-message .msg-content { background: #8b5cf6; }
+        .input-area { padding: 1rem; background: rgba(15, 23, 42, 0.8); display: flex; gap: 10px; }
         .input-area input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; border-radius: 30px; color: white; outline: none; }
 
-        /* --- 5. EMERGENCY --- */
-        .emergency-header { background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(30, 41, 59, 0.9)); border: 1px solid #ef4444; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; text-align: center; position: relative; overflow: hidden; }
+        /* Emergency */
+        .emergency-header { background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(30, 41, 59, 0.9)); border: 1px solid #ef4444; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; text-align: center; }
         .hospital-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; margin-bottom: 1rem; }
-        .hospital-card:hover { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
-        .badge-cath { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        .badge-bpjs { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; }
-
-        /* --- MOBILE RESPONSIVE --- */
-        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 2000; background: #10B981; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
+        
+        /* Mobile */
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 2000; background: #3b82f6; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(5px); }
 
         @media (max-width: 768px) {
             .mobile-menu-btn { display: flex; }
-            .sidebar { 
-                position: fixed; top: 0; left: -100%; 
-                height: 100vh; width: 260px; 
-                transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.9); 
-                padding-top: 2rem; 
-            }
+            .sidebar { position: fixed; top: 0; left: -100%; height: 100vh; width: 260px; transition: 0.3s; box-shadow: 5px 0 25px rgba(0,0,0,0.9); padding-top: 2rem; }
             .sidebar.active { left: 0; }
             .sidebar-overlay.active { display: block; }
             .main-content { padding-top: 80px; padding-left: 1.5rem; padding-right: 1.5rem; }
-            .scanner-layout, .iot-dashboard, .face-result-grid { grid-template-columns: 1fr !important; }
+            .drug-grid { grid-template-columns: 1fr !important; }
         }
-
-        @keyframes scanMove { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -132,30 +98,31 @@
         
         <nav class="sidebar">
             <div class="logo-area">
-                <h1><i class="fa-solid fa-heart-pulse" style="color: #ef4444;"></i> CardiCare</h1>
+                <h1><i class="fa-solid fa-notes-medical" style="color: #3b82f6;"></i> MediCore</h1>
             </div>
+            
             <div class="nav-menu">
                 <a href="index.html" class="nav-item">
                     <i class="fa-solid fa-house"></i> Dashboard
                 </a>
                 
-                <div class="separator">PERSONAL HEALTH</div>
-                <a class="nav-item active" id="nav-nutri" href="javascript:void(0)" onclick="switchTab('nutri')">
-                    <i class="fa-solid fa-apple-whole"></i> Nutri-Guard
-                </a>
-                <a class="nav-item" id="nav-face" href="javascript:void(0)" onclick="switchTab('face')">
-                    <i class="fa-solid fa-face-viewfinder"></i> Face Vitals
-                </a>
-                <a class="nav-item" id="nav-iot" href="javascript:void(0)" onclick="switchTab('iot')">
-                    <i class="fa-solid fa-stopwatch"></i> Smart Monitor
-                </a>
-                <a class="nav-item" id="nav-meds" href="javascript:void(0)" onclick="switchTab('meds')">
-                    <i class="fa-solid fa-user-doctor"></i> Med-Shield Chat
+                <div class="separator">MY HEALTH TOOLS</div>
+                
+                <a href="javascript:void(0)" class="nav-item active" id="nav-drugs" onclick="switchTab('drugs')">
+                    <i class="fa-solid fa-pills"></i> Drug Safety Check
                 </a>
                 
-                <div class="separator" style="color:#ef4444;">URGENT</div>
-                <a class="nav-item" id="nav-emergency" href="javascript:void(0)" onclick="switchTab('emergency')">
-                    <i class="fa-solid fa-truck-medical" style="color:#ef4444;"></i> Emergency RS
+                <a href="javascript:void(0)" class="nav-item" id="nav-lab" onclick="switchTab('lab')">
+                    <i class="fa-solid fa-file-medical-alt"></i> Lab Explainer
+                </a>
+
+                <a href="javascript:void(0)" class="nav-item" id="nav-triage" onclick="switchTab('triage')">
+                    <i class="fa-solid fa-user-nurse"></i> Triage Buddy AI
+                </a>
+                
+                <div class="separator" style="color:#ef4444;">EMERGENCY</div>
+                <a href="javascript:void(0)" class="nav-item" id="nav-emergency" onclick="switchTab('emergency')">
+                    <i class="fa-solid fa-truck-medical" style="color:#ef4444;"></i> RS & IGD Locator
                 </a>
             </div>
         </nav>
@@ -163,102 +130,99 @@
         <main class="main-content">
             <header style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h2 class="user-greeting">Patient Engine</h2>
-                    <p style="color: #94a3b8; font-size: 0.9rem;">AI-Powered Daily Health Assistant</p>
+                    <h2 class="user-greeting">Patient Space</h2>
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Your Personal AI Health Guardian</p>
                 </div>
                 <div style="background: rgba(16,185,129,0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; border: 1px solid rgba(16,185,129,0.2);">
                     ● ONLINE
                 </div>
             </header>
 
-            <section id="nutri-tab" class="module-section active-module">
-                <div class="scanner-layout">
-                    <div class="glass-card upload-zone" onclick="document.getElementById('foodInput').click()">
-                        <input type="file" id="foodInput" accept="image/*" hidden onchange="handleFoodUpload(this)">
-                        <div class="upload-content">
-                            <div style="font-size: 3rem; color: #64748b; margin-bottom: 1rem;"><i class="fa-solid fa-camera"></i></div>
-                            <h3>Scan Makanan</h3>
-                            <p style="color:#94a3b8; font-size:0.9rem;">Analisa Kalori & Garam</p>
-                        </div>
-                        <div id="scanPreview" style="display:none; width:100%; text-align:center;">
-                            <img id="previewImg" src="" style="max-width:100%; max-height:250px; border-radius:10px;">
-                            <p class="scanning-text" style="color:#10B981; margin-top:10px;"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing...</p>
-                        </div>
-                    </div>
-                    <div class="glass-card" id="nutriResult" style="text-align:center; color:#64748b;">
-                        <i class="fa-solid fa-utensils" style="font-size:3rem; margin-bottom:1rem; margin-top:4rem;"></i>
-                        <p>Hasil analisa nutrisi akan muncul di sini</p>
-                    </div>
+            <section id="drugs-tab" class="module-section active-module">
+                <div style="margin-bottom:1.5rem;">
+                    <h3 style="color:#f59e0b; margin:0;"><i class="fa-solid fa-shield-halved"></i> Drug Interaction Checker</h3>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Cek keamanan kombinasi obat yang Anda minum.</p>
                 </div>
-            </section>
 
-            <section id="face-tab" class="module-section">
-                <div style="text-align:center; margin-bottom:2rem;">
-                    <h3 style="color:#f59e0b; margin:0;"><i class="fa-solid fa-face-viewfinder"></i> rPPG Face Scan</h3>
-                    <p style="color:#94a3b8; font-size:0.9rem;">Non-contact Vital Sign Monitoring (Gemini Vision)</p>
-                </div>
-                <div class="camera-container">
-                    <video id="webcam" autoplay playsinline></video>
-                    <canvas id="faceCanvas" style="display:none;"></canvas>
-                    <div class="overlay-hud">
-                        <div class="face-guide"><div class="scan-line"></div></div>
+                <div class="drug-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                    <div class="glass-card upload-zone" onclick="document.getElementById('drug1Input').click()">
+                        <input type="file" id="drug1Input" accept="image/*" hidden onchange="handleDrugUpload(this, 1)">
+                        <div id="drug1Preview">
+                            <i class="fa-solid fa-capsules" style="font-size: 2.5rem; color:#64748b; margin-bottom:10px;"></i>
+                            <p style="margin:0; color:#94a3b8;">Foto Obat Pertama</p>
+                        </div>
+                        <img id="drug1Img" style="max-width:80%; max-height:150px; display:none; border-radius:8px;">
+                    </div>
+                    <div class="glass-card upload-zone" onclick="document.getElementById('drug2Input').click()">
+                        <input type="file" id="drug2Input" accept="image/*" hidden onchange="handleDrugUpload(this, 2)">
+                        <div id="drug2Preview">
+                            <i class="fa-solid fa-tablets" style="font-size: 2.5rem; color:#64748b; margin-bottom:10px;"></i>
+                            <p style="margin:0; color:#94a3b8;">Foto Obat Kedua</p>
+                        </div>
+                        <img id="drug2Img" style="max-width:80%; max-height:150px; display:none; border-radius:8px;">
                     </div>
                 </div>
-                <div style="text-align:center; margin-top:1.5rem;">
-                    <button id="btnScanFace" onclick="startScanProcess()" style="background:#f59e0b; color:white; border:none; padding:12px 30px; border-radius:30px; font-weight:bold; cursor:pointer;">
-                        <i class="fa-solid fa-camera"></i> Mulai Scan (3 Detik)
+
+                <div style="text-align:center; margin-top:1rem;">
+                    <button onclick="checkDrugInteraction()" style="background:#f59e0b; color:white; border:none; padding:12px 30px; border-radius:30px; font-weight:bold; cursor:pointer; font-size:1rem;">
+                        <i class="fa-solid fa-magnifying-glass"></i> Cek Keamanan
                     </button>
                 </div>
-                <div id="faceResult" class="face-result-grid" style="display:none;"></div>
+
+                <div id="drugResult" class="glass-card" style="margin-top:2rem; display:none; text-align:center;">
+                    </div>
             </section>
 
-            <section id="iot-tab" class="module-section">
-                <div class="iot-dashboard">
-                    <div class="iot-card">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-                            <h3 style="margin:0;">ECG Live Stream</h3>
-                            <span style="background:rgba(16,185,129,0.2); color:#10b981; padding:4px 10px; border-radius:4px; font-size:0.7rem; font-weight:bold;">● CONNECTED</span>
-                        </div>
-                        <div class="monitor-screen">
-                            <canvas id="ecgCanvas"></canvas>
-                        </div>
-                    </div>
-                    <div class="iot-card" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
-                        <div id="bpmValue" style="font-size:5rem; font-weight:800; color:#10b981;">--</div>
-                        <div style="color:#64748b;">BPM</div>
-                        <div style="margin-top:2rem; display:flex; gap:10px; justify-content:center;">
-                            <button onclick="simulateNormal()" style="background:#334155; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Normal</button>
-                            <button onclick="simulateAttack()" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold;">⚠️ Attack</button>
-                        </div>
-                    </div>
+            <section id="lab-tab" class="module-section">
+                <div style="margin-bottom:1.5rem;">
+                    <h3 style="color:#10b981; margin:0;"><i class="fa-solid fa-file-contract"></i> Lab Result Translator</h3>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Foto hasil lab Anda, AI akan menjelaskannya dengan bahasa sederhana.</p>
                 </div>
+
+                <div class="upload-zone" onclick="document.getElementById('labInput').click()" style="margin-bottom:2rem; border-color:#10b981;">
+                    <input type="file" id="labInput" accept="image/*" hidden onchange="handleLabUpload(this)">
+                    <div id="labPreviewText">
+                        <i class="fa-solid fa-file-image" style="font-size: 3rem; color:#10b981; margin-bottom:1rem;"></i>
+                        <p>Upload Foto Lembar Hasil Lab</p>
+                    </div>
+                    <img id="labImg" style="max-width:100%; max-height:300px; display:none; border-radius:10px;">
+                </div>
+
+                <div id="labResult" class="glass-card" style="display:none;">
+                    </div>
             </section>
 
-            <section id="meds-tab" class="module-section">
+            <section id="triage-tab" class="module-section">
+                <div style="margin-bottom:1rem;">
+                    <h3 style="color:#8b5cf6; margin:0;"><i class="fa-solid fa-user-nurse"></i> Triage Buddy AI</h3>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Konsultasi gejala awal & saran tindakan (Bukan pengganti dokter).</p>
+                </div>
+
                 <div class="chat-interface">
                     <div id="chat-container" class="chat-container">
                         <div class="message bot-message">
-                            <div style="width:30px; height:30px; background:#10B981; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-robot"></i></div>
-                            <div class="msg-content">Halo! Ada keluhan apa hari ini?</div>
+                            <div style="width:35px; height:35px; background:#8b5cf6; border-radius:50%; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-robot"></i></div>
+                            <div class="msg-content">Halo! Apa yang Anda rasakan hari ini? Ceritakan gejalanya, saya akan bantu analisa risiko awalnya.</div>
                         </div>
                     </div>
                     <div class="input-area">
-                        <input type="text" id="drugInput" placeholder="Ketik pesan..." onkeypress="handleEnter(event)">
-                        <button onclick="sendDrugConsultation()" style="background:#10B981; color:white; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+                        <input type="text" id="triageInput" placeholder="Contoh: Demam tinggi, bintik merah, lemas..." onkeypress="handleTriageEnter(event)">
+                        <button onclick="sendTriage()" style="background:#8b5cf6; color:white; border:none; width:45px; height:45px; border-radius:50%; cursor:pointer;"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </section>
 
             <section id="emergency-tab" class="module-section">
                 <div class="emergency-header">
-                    <h2 style="color:#ef4444; margin:0;"><i class="fa-solid fa-truck-medical"></i> CATH LAB LOCATOR</h2>
-                    <p style="color:#cbd5e1;">Mendeteksi RS dengan Fasilitas Intervensi Jantung (PCI) Terdekat</p>
+                    <h2 style="color:#ef4444; margin:0;"><i class="fa-solid fa-hospital"></i> UNIVERSAL IGD LOCATOR</h2>
+                    <p style="color:#cbd5e1;">Mendeteksi RS dengan Fasilitas Gawat Darurat & Trauma Center Terdekat</p>
                     <button onclick="findNearestHospital()" style="background:#ef4444; color:white; border:none; padding:10px 20px; border-radius:30px; font-weight:bold; margin-top:1rem; cursor:pointer;">
                         <i class="fa-solid fa-location-crosshairs"></i> Refresh Lokasi
                     </button>
                 </div>
                 <div id="hospital-list" style="display:flex; flex-direction:column; gap:1rem;"></div>
             </section>
+
         </main>
     </div>
 
@@ -266,12 +230,8 @@
     <script src="js/gemini.js"></script>
     
     <script>
-        // --- UI LOGIC ---
-        function toggleSidebar() { 
-            document.querySelector('.sidebar').classList.toggle('active'); 
-            document.getElementById('sidebarOverlay').classList.toggle('active'); 
-        }
-        
+        function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('active'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
+
         function switchTab(tabName) {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.module-section').forEach(el => el.classList.remove('active-module'));
@@ -280,240 +240,194 @@
             document.getElementById('nav-' + tabName).classList.add('active');
             
             if(tabName === 'emergency') findNearestHospital();
-            if(tabName === 'face') initCamera(); else stopCamera();
-            if(tabName === 'iot') { isConnected = true; resizeCanvas(); drawECG(); updateBPM(); }
-            
             if(window.innerWidth < 768) toggleSidebar();
         }
 
-        // ===============================================
-        // 1. EMERGENCY LOCATOR (DATABASE LENGKAP)
-        // ===============================================
+        // --- 1. DRUG SAFETY LOGIC ---
+        function handleDrugUpload(input, id) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('drug'+id+'Preview').style.display = 'none';
+                    const img = document.getElementById('drug'+id+'Img');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function checkDrugInteraction() {
+            const resBox = document.getElementById('drugResult');
+            resBox.style.display = 'block';
+            resBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color:#f59e0b;"></i><p>Menganalisa Kandungan Obat...</p>`;
+            
+            // SIMULASI DEMO
+            setTimeout(() => {
+                resBox.innerHTML = `
+                    <div style="background:rgba(239,68,68,0.2); padding:1rem; border-radius:10px; border:1px solid #ef4444;">
+                        <h3 style="color:#ef4444; margin:0;"><i class="fa-solid fa-triangle-exclamation"></i> PERINGATAN INTERAKSI!</h3>
+                        <p style="margin:10px 0; font-size:1.1rem;">Obat A (Aspirin) + Obat B (Warfarin)</p>
+                        <hr style="border-color:rgba(255,255,255,0.1);">
+                        <p style="color:#e2e8f0; font-size:0.95rem;">
+                            Kombinasi ini meningkatkan risiko <b>pendarahan</b> secara signifikan. Kedua obat ini bekerja mengencerkan darah. 
+                            Jangan diminum bersamaan tanpa pengawasan dokter ketat.
+                        </p>
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        // --- 2. LAB EXPLAINER LOGIC ---
+        function handleLabUpload(input) {
+            if(input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('labPreviewText').style.display = 'none';
+                    const img = document.getElementById('labImg');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    
+                    analyzeLab(e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function analyzeLab(base64) {
+            const resBox = document.getElementById('labResult');
+            resBox.style.display = 'block';
+            resBox.innerHTML = `<div style="text-align:center; padding:2rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size:2rem; color:#10b981;"></i><p>Menerjemahkan Bahasa Medis...</p></div>`;
+
+            // SIMULASI DEMO
+            setTimeout(() => {
+                resBox.innerHTML = `
+                    <h3 style="color:#10b981; margin-top:0;">Penjelasan Hasil Lab</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:8px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>Hemoglobin (Hb)</span>
+                                <span style="color:#10b981; font-weight:bold;">Normal (14.0)</span>
+                            </div>
+                            <small style="color:#94a3b8;">Darah Anda cukup bagus, tidak kurang darah (anemia).</small>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:8px; border-left:4px solid #ef4444;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>Leukosit (Sel Darah Putih)</span>
+                                <span style="color:#ef4444; font-weight:bold;">Tinggi (18.000)</span>
+                            </div>
+                            <small style="color:#e2e8f0;"><b>Artinya:</b> Tubuh sedang melawan infeksi (kemungkinan bakteri). Anda mungkin demam atau radang.</small>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:8px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span>Trombosit</span>
+                                <span style="color:#10b981; font-weight:bold;">Normal (250.000)</span>
+                            </div>
+                            <small style="color:#94a3b8;">Pembekuan darah normal. Risiko DBD rendah.</small>
+                        </div>
+                    </div>
+                `;
+            }, 2000);
+        }
+
+        // --- 3. TRIAGE BUDDY LOGIC ---
+        function handleTriageEnter(e) { if(e.key === 'Enter') sendTriage(); }
         
-        // Database Cath Lab berdasarkan Dokumen "Verifikasi RS Cath Lab"
+        async function sendTriage() {
+            const input = document.getElementById('triageInput');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const container = document.getElementById('chat-container');
+            container.innerHTML += `<div class="message user-message"><div class="msg-content">${text}</div></div>`;
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            // Loading
+            const loadId = 'load'+Date.now();
+            container.innerHTML += `<div id="${loadId}" class="message bot-message"><div class="msg-content"><i class="fa-solid fa-ellipsis fa-fade"></i></div></div>`;
+            container.scrollTop = container.scrollHeight;
+
+            // SIMULASI RESPON AI (Bisa diganti Real API Gemini Chat)
+            setTimeout(() => {
+                document.getElementById(loadId).remove();
+                
+                // Logic Sederhana untuk Demo
+                let reply = "";
+                let risk = "low";
+                
+                if(text.toLowerCase().includes("nyeri dada") || text.toLowerCase().includes("sesak")) {
+                    reply = "⚠️ <b>RISIKO TINGGI (Merah):</b> Nyeri dada atau sesak bisa jadi tanda serangan jantung. <br><br><b>Saran:</b> Jangan tunggu, segera ke IGD terdekat. Minta orang lain mengantar Anda.";
+                } else if(text.toLowerCase().includes("demam") || text.toLowerCase().includes("bintik")) {
+                    reply = "⚠️ <b>RISIKO SEDANG (Kuning):</b> Demam dengan bintik bisa mengarah ke DBD atau Campak. <br><br><b>Saran:</b> Minum banyak air, cek suhu berkala. Jika lemas atau mimisan, segera ke RS.";
+                } else {
+                    reply = "✅ <b>RISIKO RENDAH (Hijau):</b> Gejala ini sepertinya ringan. Istirahat cukup dan pantau 24 jam. Jika memburuk, hubungi dokter.";
+                }
+
+                container.innerHTML += `
+                    <div class="message bot-message">
+                        <div style="width:35px; height:35px; background:#8b5cf6; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="fa-solid fa-robot"></i></div>
+                        <div class="msg-content">${reply}</div>
+                    </div>`;
+                container.scrollTop = container.scrollHeight;
+            }, 1500);
+        }
+
+        // --- 4. EMERGENCY (Universal DB) ---
         const hospitalDB = [
-            // --- SUMATERA ---
-            { name: "RSUD Dr. Zainoel Abidin", type: "Rujukan Utama Aceh", lat: 5.5617, lng: 95.3219, cath: true, bpjs: true },
-            { name: "RSUP H. Adam Malik", type: "Pusat Jantung Sumatera Utara", lat: 3.5187, lng: 98.6055, cath: true, bpjs: true },
-            { name: "RSUD Dr. Pirngadi Medan", type: "RSUD Kota Medan", lat: 3.5937, lng: 98.6865, cath: true, bpjs: true },
-            { name: "RSUD Arifin Achmad", type: "Rujukan Riau", lat: 0.5250, lng: 101.4485, cath: true, bpjs: true },
-            { name: "RSUD Raja Ahmad Tabib", type: "Rujukan Kepulauan Riau", lat: 0.9090, lng: 104.4750, cath: true, bpjs: true },
-            { name: "RSUD M. Yunus Bengkulu", type: "Rujukan Bengkulu", lat: -3.8184, lng: 102.2907, cath: true, bpjs: true },
-            
-            // --- DKI JAKARTA & BANTEN ---
-            { name: "RS Jantung Harapan Kita", type: "Pusat Jantung Nasional", lat: -6.1843, lng: 106.7979, cath: true, bpjs: true },
-            { name: "RSCM Kencana", type: "Rujukan Nasional", lat: -6.1983, lng: 106.8475, cath: true, bpjs: true },
-            { name: "RSUD Tarakan", type: "Rujukan Jakarta Pusat", lat: -6.1711, lng: 106.8184, cath: true, bpjs: true },
-            { name: "RSUD Pasar Minggu", type: "Rujukan Jakarta Selatan", lat: -6.2913, lng: 106.8225, cath: true, bpjs: true },
-            { name: "Siloam Hospitals Lippo Village", type: "Swasta Terakreditasi JCI", lat: -6.2285, lng: 106.6111, cath: true, bpjs: true },
-            { name: "RS Jantung Jakarta", type: "Pusat Jantung Matraman", lat: -6.2023, lng: 106.8617, cath: true, bpjs: true },
-            
-            // --- JAWA BARAT ---
-            { name: "RSUP Dr. Hasan Sadikin", type: "Pusat Rujukan Jabar (Bandung)", lat: -6.8967, lng: 107.5986, cath: true, bpjs: true },
-            { name: "RS Santosa Bandung Central", type: "RS Swasta Utama", lat: -6.9197, lng: 107.5973, cath: true, bpjs: true },
-            { name: "Mandaya Royal Hospital Puri", type: "Pusat Jantung Teknologi Tinggi", lat: -6.1878, lng: 106.7118, cath: true, bpjs: true },
-            
-            // --- JAWA TENGAH & DIY ---
-            { name: "RSUP Dr. Sardjito", type: "Pusat Rujukan DIY", lat: -7.7686, lng: 110.3736, cath: true, bpjs: true },
-            { name: "RSUD Dr. Moewardi", type: "Rujukan Utama Jateng (Solo)", lat: -7.5563, lng: 110.8359, cath: true, bpjs: true },
-            { name: "RS Kardiologi Emirates", type: "RS Khusus Jantung (Solo)", lat: -7.5583, lng: 110.8550, cath: true, bpjs: true },
-            { name: "RS Dr. Kariadi", type: "Rujukan Semarang", lat: -6.9934, lng: 110.4087, cath: true, bpjs: true },
-            
-            // --- JAWA TIMUR ---
-            { name: "RSUD Dr. Soetomo", type: "Pusat Rujukan Jatim (Surabaya)", lat: -7.2694, lng: 112.7584, cath: true, bpjs: true },
-            { name: "RS Universitas Airlangga", type: "RS Pendidikan", lat: -7.2699, lng: 112.7845, cath: true, bpjs: true },
-            { name: "RSUD Dr. Saiful Anwar", type: "Rujukan Malang Raya", lat: -7.9734, lng: 112.6300, cath: true, bpjs: true },
-            
-            // --- BALI, NTT, NTB ---
-            { name: "RSUP Prof. Ngoerah (Sanglah)", type: "Rujukan Bali & Nusa Tenggara", lat: -8.6737, lng: 115.2127, cath: true, bpjs: true },
-            { name: "Siloam Hospitals Kupang", type: "Rujukan NTT", lat: -10.1601, lng: 123.6067, cath: true, bpjs: true },
-            
-            // --- KALIMANTAN & IKN ---
-            { name: "RSUD Sultan Syarif Mohamad Alkadrie", type: "Rujukan Kalbar", lat: -0.0227, lng: 109.3323, cath: true, bpjs: true },
-            { name: "Mayapada Hospital Nusantara", type: "RS IKN (Kalimantan Timur)", lat: -0.9730, lng: 116.7073, cath: true, bpjs: true },
-            
-            // --- SULAWESI & TIMUR ---
-            { name: "RSUP Dr. Wahidin Sudirohusodo", type: "Rujukan Indonesia Timur (Makassar)", lat: -5.1364, lng: 119.4939, cath: true, bpjs: true },
-            { name: "Primaya Hospital Makassar", type: "RS Swasta Makassar", lat: -5.1634, lng: 119.4389, cath: true, bpjs: true },
-            { name: "RSUD Dr. M. Haulussy", type: "Rujukan Maluku (Ambon)", lat: -3.7029, lng: 128.1722, cath: true, bpjs: true },
-            { name: "RSUD Provinsi Papua Barat", type: "Rujukan Manokwari", lat: -0.8614, lng: 134.0620, cath: true, bpjs: true }
+            { name: "RSUP Dr. Sardjito", type: "RSUP Pusat Rujukan", lat: -7.7686, lng: 110.3736 },
+            { name: "RS JIH", type: "RS Swasta & Trauma Center", lat: -7.7566, lng: 110.4034 },
+            { name: "RS Panti Rapih", type: "RS Umum & IGD 24 Jam", lat: -7.7770, lng: 110.3762 },
+            { name: "RSUD Dr. Moewardi", type: "RSUD Pusat", lat: -7.5563, lng: 110.8359 },
+            { name: "RS Hasan Sadikin", type: "RSUP Pusat (Bandung)", lat: -6.8967, lng: 107.5986 }
         ];
 
         function findNearestHospital() {
             const list = document.getElementById('hospital-list');
-            list.innerHTML = `<div style="text-align:center; padding:2rem; color:#64748b;"><i class="fa-solid fa-satellite-dish fa-spin" style="font-size:2rem; margin-bottom:1rem;"></i><p>Mencari Satelit GPS...</p></div>`;
+            list.innerHTML = `<div style="text-align:center; padding:2rem; color:#64748b;"><i class="fa-solid fa-satellite-dish fa-spin" style="font-size:2rem; margin-bottom:1rem;"></i><p>Mencari Lokasi...</p></div>`;
 
-            if (!navigator.geolocation) { alert("GPS tidak didukung browser ini."); return; }
+            if (!navigator.geolocation) { alert("GPS Error"); return; }
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const uLat = position.coords.latitude;
                     const uLng = position.coords.longitude;
-                    
-                    // Hitung Jarak Real-time
                     const results = hospitalDB.map(h => {
                         const dist = calcDist(uLat, uLng, h.lat, h.lng);
                         return { ...h, distance: dist };
                     });
-                    
-                    // Urutkan Terdekat
                     results.sort((a, b) => a.distance - b.distance);
-                    const top3 = results.slice(0, 3);
-
+                    
                     let html = "";
-                    top3.forEach(h => {
-                        const time = Math.ceil((h.distance / 40) * 60); // Asumsi 40km/jam
-                        // FIX: Memperbaiki Typo URL Maps (${h.lat} bukan {h.lat})
+                    results.slice(0, 3).forEach(h => {
                         const mapLink = `https://www.google.com/maps/dir/?api=1&destination=${h.lat},${h.lng}`;
-                        
                         html += `
                         <div class="hospital-card">
                             <div>
-                                <h4 style="margin:0 0 5px 0; color:white;">${h.name} <i class="fa-solid fa-circle-check" style="color:#10b981;"></i></h4>
+                                <h4 style="margin:0 0 5px 0; color:white;">${h.name}</h4>
                                 <p style="margin:0; font-size:0.85rem; color:#94a3b8;">${h.type}</p>
-                                <div style="margin-top:8px;">
-                                    <span class="badge-cath">CATH LAB AVAILABLE</span>
-                                    ${h.bpjs ? '<span class="badge-bpjs">TERIMA BPJS</span>' : ''}
-                                </div>
+                                <span style="background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid #ef4444; padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:bold;">IGD 24 JAM</span>
                             </div>
                             <div style="text-align:right;">
                                 <div style="font-size:1.4rem; font-weight:800; color:#ef4444;">${h.distance.toFixed(1)} km</div>
-                                <span style="font-size:0.8rem; color:#cbd5e1;">~${time} menit</span>
                                 <a href="${mapLink}" target="_blank" style="text-decoration:none;">
-                                    <button style="display:block; margin-top:5px; background:white; border:none; padding:5px 10px; border-radius:15px; cursor:pointer; font-weight:bold; font-size:0.8rem; color:#0f172a;">
+                                    <button style="margin-top:5px; background:white; border:none; padding:5px 10px; border-radius:15px; cursor:pointer; font-weight:bold; font-size:0.8rem; color:#0f172a;">
                                         <i class="fa-solid fa-location-arrow"></i> NAVIGATE
                                     </button>
                                 </a>
                             </div>
                         </div>`;
                     });
-                    
-                    if(top3[0].distance > 50) {
-                        html += `<div style="text-align:center; padding:1rem; border:1px dashed #f59e0b; border-radius:10px; color:#f59e0b; font-size:0.9rem; margin-top:1rem;">⚠️ RS Cath Lab terdekat cukup jauh. Segera ke IGD RSUD setempat untuk stabilisasi awal!</div>`;
-                    }
-                    
                     list.innerHTML = html;
                 },
-                (err) => { list.innerHTML = `<p style="color:#ef4444; text-align:center;">Gagal akses lokasi. Pastikan GPS aktif.</p>`; },
-                { enableHighAccuracy: true }
+                (err) => { list.innerHTML = "Gagal akses GPS."; }, { enableHighAccuracy: true }
             );
         }
-
         function calcDist(lat1, lon1, lat2, lon2) {
-            const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180;
+            const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
-
-        // ===============================================
-        // 2. FACE SCAN (AI REAL + SAFETYNET)
-        // ===============================================
-        let stream;
-        async function initCamera() {
-            try { stream = await navigator.mediaDevices.getUserMedia({ video: true }); document.getElementById('webcam').srcObject = stream; }
-            catch(e) { alert("Camera Error"); }
-        }
-        function stopCamera() { if(stream) stream.getTracks().forEach(t => t.stop()); }
-        
-        function startScanProcess() {
-            const btn = document.getElementById('btnScanFace');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Scanning...';
-            btn.disabled = true;
-            setTimeout(captureAndAnalyze, 3000);
-        }
-
-        async function captureAndAnalyze() {
-            const video = document.getElementById('webcam');
-            const canvas = document.getElementById('faceCanvas');
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            const base64 = canvas.toDataURL('image/jpeg').split(',')[1];
-            
-            const btn = document.getElementById('btnScanFace');
-            btn.innerHTML = 'AI Analyzing...';
-
-            try {
-                // TRY REAL API (Gemini 2.0 Flash)
-                const prompt = `Analyze face. Return JSON ONLY: {"hr": number (60-100), "spo2": number (95-100), "stress": "Low/Med", "analysis": "brief text"}`;
-                
-                // UNCOMMENT JIKA SUDAH ADA API KEY BENERAN DI GEMINI.JS
-                // const res = await askGeminiVision(base64, prompt); const data = JSON.parse(res); renderFaceResult(data, "REAL AI");
-                
-                throw new Error("Simulate SafetyNet Trigger"); 
-
-            } catch (err) {
-                console.log("SafetyNet Triggered");
-                setTimeout(() => {
-                    const dummy = {
-                        hr: Math.floor(Math.random()*(90-70)+70),
-                        spo2: Math.floor(Math.random()*(100-98)+98),
-                        stress: "Low",
-                        analysis: "Perfusi kulit wajah baik. Tidak ada tanda sianosis (kebiruan). Kondisi kardiovaskular stabil."
-                    };
-                    renderFaceResult(dummy, "SIMULATED");
-                    btn.innerHTML = '<i class="fa-solid fa-camera"></i> Scan Lagi';
-                    btn.disabled = false;
-                }, 1500);
-            }
-        }
-
-        function renderFaceResult(data, engine) {
-            document.getElementById('faceResult').style.display = 'grid';
-            document.getElementById('faceResult').innerHTML = `
-                <div class="metric-card"><span class="metric-val" style="color:#ef4444">${data.hr} <small>bpm</small></span><span class="metric-label">HEART RATE</span></div>
-                <div class="metric-card"><span class="metric-val" style="color:#3b82f6">${data.spo2}%</span><span class="metric-label">SpO2</span></div>
-                <div class="metric-card"><span class="metric-val" style="color:#10b981">${data.stress}</span><span class="metric-label">STRESS</span></div>
-                <div style="grid-column:span 3; background:rgba(255,255,255,0.05); padding:1rem; border-radius:10px; font-size:0.9rem; color:#cbd5e1;">
-                    <b><i class="fa-solid fa-robot"></i> AI Analysis (${engine}):</b> ${data.analysis}
-                </div>`;
-        }
-
-        // ===============================================
-        // 3. IOT & OTHERS
-        // ===============================================
-        let isConnected = false;
-        let simMode = 'normal';
-        const canvas = document.getElementById('ecgCanvas');
-        const ctx = canvas.getContext('2d');
-        let xPos = 0;
-
-        function resizeCanvas() { if(canvas) { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; } }
-        window.addEventListener('resize', resizeCanvas);
-
-        function drawECG() {
-            if(!isConnected) return;
-            ctx.lineWidth = 2; ctx.strokeStyle = simMode==='normal'?'#10b981':'#ef4444';
-            let y = canvas.height/2;
-            if(Math.random() > 0.9) y -= (simMode==='normal'?50:80);
-            else y += (Math.random()-0.5)*(simMode==='normal'?10:50);
-            ctx.lineTo(xPos, y); ctx.stroke(); xPos+=3;
-            if(xPos > canvas.width) { xPos=0; ctx.clearRect(0,0,canvas.width,canvas.height); ctx.beginPath(); }
-            requestAnimationFrame(drawECG);
-        }
-
-        function updateBPM() {
-            setInterval(() => {
-                if(!isConnected) return;
-                let val = simMode==='normal' ? Math.floor(Math.random()*(80-70)+70) : Math.floor(Math.random()*(160-140)+140);
-                document.getElementById('bpmValue').innerText = val;
-                document.getElementById('bpmValue').style.color = simMode==='normal'?'#10b981':'#ef4444';
-            }, 1000);
-        }
-        
-        function simulateNormal() { simMode = 'normal'; }
-        function simulateAttack() { simMode = 'attack'; alert("⚠️ ARITMIA TERDETEKSI! Segera ke RS."); switchTab('emergency'); }
-
-        // Chat & Nutri Handlers
-        function handleEnter(e) { if(e.key==='Enter') sendDrugConsultation(); }
-        function sendDrugConsultation() {
-            const val = document.getElementById('drugInput').value; if(!val) return;
-            document.getElementById('chat-container').innerHTML += `<div class="message user-message"><div class="msg-content">${val}</div></div>`;
-            document.getElementById('drugInput').value = '';
-            setTimeout(() => {
-                document.getElementById('chat-container').innerHTML += `<div class="message bot-message"><div class="msg-content">Obat aman dikonsumsi. (Simulasi AI)</div></div>`;
-            }, 1000);
-        }
-        function handleFoodUpload() { alert("Simulasi Scan Nutrisi Berjalan!"); }
     </script>
 </body>
 </html>
